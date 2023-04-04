@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $conf_password = $_POST['conf_password'];
     $repassword = $_POST['repassword'];
     $acc_status = "1";
-    $catid = "1";
+    $catid = "0";
 
     // validation if username aleady exists in the database
     include('../connect.php');

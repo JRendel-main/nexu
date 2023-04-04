@@ -11839,7 +11839,6 @@ lock:
   label: lock
   search:
     terms:
-      - admin
       - lock
       - open
       - password
