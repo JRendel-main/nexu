@@ -1,7 +1,7 @@
 <?php
-$host = 'db4free.net';
-$user = 'rendel';
-$password = 'Rendel78';
+$host = 'localhost';
+$user = 'root';
+$password = '';
 $db = 'nexuslink';
 
 $database= new mysqli($host,$user, $password,$db);

@@ -1,66 +1,95 @@
 <?php
 // write backend for login
-include 'includes/connect.php';
+include 'connect.php';
+$error = array();
+session_start();
 
-// check if user is logged in
-if (isset($_SESSION['user_id'])) {
-    // if user is logged in, redirect to index.php
-    header('Location: index.php');
-    exit();
-}
+$_SESSION['username'] = "";
+$_SESSION['password1'] = "";
 
-// check if form was submitted and if it was, check if the user exists
-if (isset($_POST['submit'])) {
-    // get the user's email and password
-    $username = $_POST['username'];
-    $password1 = $_POST['password'];
+if($_POST){
 
-    // check if the user exists
-    $sql = "SELECT * FROM tbl_auth WHERE username = '$username'";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
-    $password = $row['password'];
+    $username=$_POST['username'];
+    $password1=$_POST['password1'];
+    
 
-    // if the user exists, check if the password is correct
-    if (mysqli_num_rows($result) > 0) {
-        // check if the password is correct
-        if ($password == $password1 && $row['acc_status'] == 1) {
-            // if the password is correct, start a session and redirect to index.php
-            session_start();
-            $_SESSION['auth_id'] = $row['auth_id'];
+    $result= $database->query("select * from tbl_auth where username='$username'");
+    $row = $result->fetch_assoc();
+    $count = $result->num_rows;
+    // get the password
+    // check if the password is correct
+    if($count == 1){
+        $passwordc = $row['password'];
+        if($password1 == $passwordc){
+            //get the acc_status
+            $acc_status = $row['acc_status'];
+            if($acc_status == 1) {
+                // get the categoryid
+                $catid = $row['catid'];
+                if ($catid == 0) {
+                    // get the information of admin
+                    $authid = $row['auth_id'];
+                    $result1 = $database->query("select * from tbl_admin where auth_id='$authid'");
+                    $row1 = $result1->fetch_assoc();
 
-            // check the category of the user with catid
-            $catid = $row['catid'];
+                    $adminid = $row1['adminid'];
+                    $username = $row['username'];
 
-            // if the user is a student, redirect to student.php
-            if ($catid == 1) {
+                    // make it global variable
+                    $_SESSION['adminid'] = $adminid;
+                    $_SESSION['username'] = $username;
+                    $_SESSION['catid'] = $catid;
+                    $_SESSION['authid'] = $authid;
+                    header('location: admin/index.php');
+                    
+                }
+                elseif ($catid == 1) {
+                    $authid = $row['auth_id'];
+                    $result1 = $database->query("select * from tbl_tutee where auth_id='$authid'");
+                    $row1 = $result1->fetch_assoc();
 
-                header('Location: tutor/index.php');
-                exit();
-            }
-            elseif ($catid == 2) {
-                header('Location: tutee/index.php');
-                exit();
-            }
-            elseif ($catid == 0) {
-                header('Location: admin/index.php');
-                exit();
+                    $tuteeid = $row1['tuteeid'];
+                    $username = $row['username'];
+
+                    // make it global variable
+                    $_SESSION['tuteeid'] = $tuteeid;
+                    $_SESSION['username'] = $username;
+                    $_SESSION['catid'] = $catid;
+                    $_SESSION['authid'] = $authid;
+                    header('location: tutee/index.php');
+
+                }
+                elseif ($catid == 2) {
+                    $authid = $row['auth_id'];
+                    $result1 = $database->query("select * from tbl_tutor where auth_id='$authid'");
+                    $row1 = $result1->fetch_assoc();
+
+                    $tutorid = $row1['tutorid'];
+                    $username = $row['username'];
+
+                    // make it global variable
+                    $_SESSION['tutorid'] = $tutorid;
+                    $_SESSION['username'] = $username;
+                    $_SESSION['catid'] = $catid;
+                    $_SESSION['authid'] = $authid;
+                    header('location: tutor/index.php');
+
+                }
             }
             else {
-                header('Location: index.php');
-                exit();
+                $errors[] = "Account is not active, Contact the Administrtor";
             }
-
-            exit();
-        } else {
-            // if the password is incorrect, display an error message
-            $error = 'The password is incorrect.';
         }
-    } else {
-        // if the user does not exist, display an error message
-        $error = 'The user does not exist.';
+        else {
+            $errors[] = "Password is incorrect";
+        }
+    }
+    else {
+        $errors[] = "Username is is not been registered";
     }
 }
+
+
 
 
 
@@ -77,7 +106,7 @@ if (isset($_POST['submit'])) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>Nexus Link - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -109,15 +138,15 @@ if (isset($_POST['submit'])) {
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                 </div>
-                                <form class="user">
+                                <form class="user" method="POST">
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-user"
                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                               placeholder="Enter Username...">
+                                               placeholder="Enter Username..." name="username">
                                     </div>
                                     <div class="form-group">
                                         <input type="password" class="form-control form-control-user"
-                                               id="exampleInputPassword" placeholder="Password">
+                                               id="exampleInputPassword" placeholder="Password" name="password1">
                                     </div>
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox small">
@@ -126,9 +155,18 @@ if (isset($_POST['submit'])) {
                                                 Me</label>
                                         </div>
                                     </div>
-                                    <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                        Login
-                                    </a>
+                                    <button class="btn btn-primary btn-user btn-block" type="submit">Login</button>
+                                    <?php
+                                    // display the error
+                                    if(!empty($errors)) {
+                                        echo "<div class='error-messages'> ";
+                                        foreach ($errors as $error) {
+                                            echo "<p><strong>$error</strong></p>";
+                                        }
+                                        echo "</div>";
+                                    }
+
+                                    ?>
                                     <hr>
                                 </form>
                                 <hr>
@@ -136,7 +174,7 @@ if (isset($_POST['submit'])) {
                                     <a class="small" href="forgot-password.html">Forgot Password?</a>
                                 </div>
                                 <div class="text-center">
-                                    <a class="small" href="register.html">Create an Account!</a>
+                                    <a class="small" href="register.php">Create an Account!</a>
                                 </div>
                             </div>
                         </div>

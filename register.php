@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="col-md-12 text-center">
-            <p>Already have an account? <a href="login.html">Login here</a>.</p>
+            <p>Already have an account? <a href="login.php">Login here</a>.</p>
         </div>
     </div>
 </div>

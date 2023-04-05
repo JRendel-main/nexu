@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $username = trim($_POST['username']);
     $conf_password = $_POST['conf_password'];
     $repassword = $_POST['repassword'];
-    $acc_status = "1";
+    $acc_status = "0";
     $catid = "2";
 
     // validation if username aleady exists in the database
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                         }
                         ?>
                         <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                            <h1 class="h4 text-gray-900 mb-4">Create an Account! as Tutee</h1>
                         </div>
                         <form class="user" method="POST">
                             <label for="exampleFirstName">
