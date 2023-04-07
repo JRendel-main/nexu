@@ -20,6 +20,7 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </html>
 <body>
+<div class="container">
 <div class="container h-100">
     <div class="row justify-content-center align-items-center h-100">
         <div class="col-md-6 col-sm-12 mb-4">
@@ -44,6 +45,7 @@
             <p>Already have an account? <a href="login.php">Login here</a>.</p>
         </div>
     </div>
+</div>
 </div>
 
 

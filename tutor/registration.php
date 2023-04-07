@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $tutor_id = $row2['tutor_id'];
 
         if ($result && $result2 && $result3 && $result4) {
-            header("Location: ../index.php");
+            header("Location: ../login.php");
             // get the tutor_id of the user from tbl_tutor
 
         } else {
