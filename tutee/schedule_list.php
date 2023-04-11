@@ -1,4 +1,4 @@
-<?php include 'includes/header.php'; ?>
+
 <?php
 include('../connect.php');
 $error = array();
@@ -24,25 +24,10 @@ if(isset($_SESSION["username"])){
 
 
 ?>
-<style>
-    .modal.fade .modal-dialog {
-        -webkit-transform: translate(0, -50px);
-        transform: translate(0, -50px);
-        transition: transform 0.3s ease-out;
-    }
-
-    .modal.fade.show .modal-dialog {
-        -webkit-transform: translate(0, 0);
-        transform: translate(0, 0);
-    }
-
-</style>
+<?php include 'includes/header.php'; ?>
 <!-- Page Wrapper -->
 <div id="wrapper">
     <?php include 'includes/sidebar.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
@@ -104,7 +89,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-bell fa-fw"></i>
                             <!-- Counter - Alerts -->
-                            <span class="badge badge-danger badge-counter">2+</span>
+                            <span class="badge badge-danger badge-counter">3+</span>
                         </a>
                         <!-- Dropdown - Alerts -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -155,7 +140,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">123131</span>
+                            <span class="badge badge-danger badge-counter">7</span>
                         </a>
                         <!-- Dropdown - Messages -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -165,7 +150,7 @@ if(isset($_SESSION["username"])){
                             </h6>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="../img/undraw_profile_1.svg"
+                                    <img class="rounded-circle" src="img/undraw_profile_1.svg"
                                          alt="...">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
@@ -214,7 +199,7 @@ if(isset($_SESSION["username"])){
                             <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                         </div>
                     </li>
-
+a
                     <div class="topbar-divider d-none d-sm-block"></div>
                     <?php
                     // get the name of tutee using adminid
@@ -223,8 +208,6 @@ if(isset($_SESSION["username"])){
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
                     $tuteename = $row['tutee_fname'] . ' ' .$row['tutee_lname'];
-
-                    //get the id of tutee
 
 
                     ?>
@@ -263,165 +246,188 @@ if(isset($_SESSION["username"])){
                 </ul>
 
             </nav>
-
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
+                <?php
+                $tutorid = $_GET['tutorId'];
+                $tuteeid = $_GET['tuteeId'];
+
+                $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                $result = mysqli_query($database, $sql);
+                $row = mysqli_fetch_assoc($result);
+
+                $fname = $row['tutor_fname'];
+                $mname = $row['tutor_mname'];
+                $lname = $row['tutor_lname'];
+                $fullname = $fname . ' ' . $mname . ' ' . $lname;
+
+
+                // Retrieve schedule data from the database
+                $sql = "SELECT * FROM tbl_schedule WHERE tutorid = '$tutorid'";
+                $result = mysqli_query($database, $sql);
+
+                // Create an array to hold the calendar events
+                $events = array();
+
+                // Loop through each row in the result set
+                while ($row = mysqli_fetch_assoc($result)) {
+                    // Format the date and time data for the calendar
+                    $start = $row['date'] . ' ' . $row['start_time'];
+                    $end = $row['date'] . ' ' . $row['end_time'];
+                    $id = $row['scheduleid'];
+
+                    // Create a new event object for the calendar
+                    $event = array(
+                        'id' => $row['scheduleid'],
+                        'title' => $row['topic'],
+                        'description' => $row['description'],
+                        'start' => $start,
+                        'end' => $end,
+                        'max_tutee' => $row['max_tutee']
+                    );
+
+                    // Add the event to the array
+                    $events[] = $event;
+                }
+
+
+                ?>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
                 <!-- Page Heading -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Tutor - Lists</h6>
-                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"><?php echo $fullname?>'s Schedule</h6>
+                        </div>
                         <div class="card-body">
-                            <div class="row d-flex justify-content-center">
-
-                                <?php
-                                // Fetch all tutors from database from tbl_tutor where acc_status = 1 (active) use tbl_auth from tbl_tutor to get acc_status from tbl_auth
-                                $sql = "SELECT * FROM tbl_tutor INNER JOIN tbl_auth ON tbl_tutor.auth_id = tbl_auth.auth_id WHERE tbl_auth.acc_status = 1";
-                                $result = $database->query($sql);
-                                $tuteeid = $_SESSION['tuteeid'];
-
-                                // Display tutors in cards
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo '<div class="col-lg-2 col-md-4 mb-4 text-center">';
-                                        echo '<div class="card h-100">';
-                                        echo '<img class="card-img-top rounded-circle" src="' . '../img/undraw_profile_2.svg" alt="Card image cap" width="80" height="80">';
-                                        echo '<div class="card-body">';
-                                        echo '<h4 class="card-title">' . $row["tutor_fname"] . ' ' . $row["tutor_lname"] .'</h4>';
-                                        echo '<p class="card-text">' . $row["tutor_bio"] . '</p>';
-                                        echo '</div>';
-                                        echo '<div class="card-footer">';
-                                        echo '<button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-id="' . $row['tutorid'] . '">View Profile</button>';
-                                        echo '</div>';
-                                        echo '</div>';
-                                        echo '</div>';
-                                    }
-                                } else {
-                                    echo "No tutors found.";
-                                }
-                                ?>
-
-                            </div>
-                            <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Tutor Profile</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- Display the tutor details here -->
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary" id="requestScheduleBtn">Request Schedule</button>
+                            <div class="row">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div id="calendar"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
-
                         </div>
+                        <!-- Define the Bootstrap modal -->
+                        <div class="modal fade" id="event-modal" tabindex="-1" aria-labelledby="event-modal-label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="event-modal-label">Event Details</h5>
+                                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Event details will be inserted here -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!-- /.container-fluid -->
+
                     </div>
+                    <!-- End of Main Content -->
 
+                <script>
+                    jQuery.noConflict();
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            events: <?php echo json_encode($events); ?>,
+                            eventClick: function(info) {
+                                // Get the event details
+                                var event = info.event;
+                                var topic = event.title;
+                                var description = event.extendedProps.description;
+                                var start = event.start.toLocaleString();
+                                var end = event.end.toLocaleString();
+                                var id = event.id;
 
+                                // Set the content of the modal
+                                var modalBody = document.querySelector('.modal-body');
+                                modalBody.innerHTML = '<p><strong>Topic:</strong> ' + topic + '</p>' +
+                                    '<p><strong>Description:</strong> ' + description + '</p>' +
+                                    '<p><strong>Start Time:</strong> ' + start + '</p>' +
+                                    '<p><strong>End Time:</strong> ' + end + '</p>';
 
+                                // add button to modal footer
+                                var modalFooter = document.querySelector('.modal-footer');
+                                modalFooter.innerHTML = '<a href="request.php?tutorId=<?php echo $tutorid?>&tuteeId=<?php echo $tuteeid?>&scheduleId=' + id + '" class="btn btn-primary">Book</a>';
+                                modalFooter.innertHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'
 
+                                // Show the modal
+                                var modal = new bootstrap.Modal(document.getElementById('event-modal'));
+                                modal.show();
+                            }
+                        });
+                        calendar.render();
+                    });
+                </script>
                 </div>
+
+
+
+
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Nexus Link 2023</span>
+                    </div>
                 </div>
-    </div>
-    <script>
-        $('#exampleModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var tutorId = button.data('id');
-            var modal = $(this);
-
-            // Make an AJAX request to get the tutor details
-            $.ajax({
-                type: 'POST',
-                url: 'get_tutor_details.php',
-                data: { tutorId: tutorId },
-                success: function (data) {
-                    modal.find('.modal-body').html(data);
-                    modal.find('#requestScheduleBtn').data('tutorid', tutorId);
-                },
-                error: function () {
-                    alert('Error getting tutor details');
-                }
-            });
-
-            $('#requestScheduleBtn').on('click', function () {
-                var tuteeId = <?php echo $tuteeid; ?>;
-                var tutorId = $(this).data('tutorid');
-                window.location.href = 'schedule_list.php?tuteeId=' + tuteeId + '&tutorId=' + tutorId;
-            });
-        });
-    </script>
-
-
-
-
-
-
-
-
+            </footer>
+            <!-- End of Footer -->
 
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2020</span>
-                </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Page Wrapper -->
 
-</div>
-<!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="../login.php">Logout</a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-
-
-
-
-
-
-
-<?php include 'includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>

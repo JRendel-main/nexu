@@ -202,11 +202,11 @@ if(isset($_SESSION["username"])){
                     <div class="topbar-divider d-none d-sm-block"></div>
                     <?php
                     // get the name of admin using adminid
-                    $adminid = $_SESSION['adminid'];
-                    $sql = "SELECT * FROM tbl_admin WHERE adminid = '$adminid'";
+                    $tutorid = $_SESSION['tutorid'];
+                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
-                    $adminname = $row['admin_name'];
+                    $tutorname = $row['tutor_fname'];
 
 
                     ?>
@@ -215,7 +215,7 @@ if(isset($_SESSION["username"])){
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $adminname; ?></span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $tutorname; ?></span>
                             <img class="img-profile rounded-circle"
                                  src="../img/undraw_profile.svg">
                         </a>
@@ -256,6 +256,86 @@ if(isset($_SESSION["username"])){
                         <h6 class="m-0 font-weight-bold text-primary">Tutor - Dashboard</h6>
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-danger shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                    Pending Requests</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <?php
+                                                    $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 0";
+                                                    $result = mysqli_query($database, $sql);
+                                                    $count = mysqli_num_rows($result);
+                                                    echo $count;
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Total Sessions</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <?php
+
+                                                    $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
+                                                    $result = mysqli_query($database, $sql);
+                                                    $count = mysqli_num_rows($result);
+                                                    echo $count;
+
+
+                                                    ?>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-md-6 mb-4">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                    Total of Tutees</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    <?php
+
+                                                    // check the unique tutee id in tbl_request and count the number of unique tutee id
+                                                    $sql = "SELECT DISTINCT tuteeid FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
+                                                    $result = mysqli_query($database, $sql);
+                                                    $count = mysqli_num_rows($result);
+                                                    echo $count;
+
+
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         
                     </div>
                 </div>
