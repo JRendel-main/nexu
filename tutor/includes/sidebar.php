@@ -1,10 +1,10 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+        <div class="sidebar-brand-icon">
+            <img src="../img/favicon.ico" alt="logo" width="50" height="50">
         </div>
         <div class="sidebar-brand-text mx-3">Tutor Dashboard</sup></div>
     </a>
@@ -23,7 +23,7 @@
 
     <!-- Heading -->
     <li class="nav-item">
-        <a class="nav-link" href="requests.php">
+        <a class="nav-link" href="request.php">
             <i class="fas fa-fw fa-users"></i>
             <span> Schedule Request List</span></a>
     </li>

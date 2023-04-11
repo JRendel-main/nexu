@@ -246,126 +246,264 @@ if(isset($_SESSION["username"])){
 
             </nav>
             <!-- End of Topbar -->
-
-            <!-- Begin Page Content -->
             <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                </div>
 
-                <!-- Page Heading -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Tutor - Dashboard</h6>
+                <div class="row">
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-danger shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                            Pending Requests</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php
+                                            $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 0";
+                                            $result = mysqli_query($database, $sql);
+                                            $count = mysqli_num_rows($result);
+                                            echo $count;
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xl-4 col-md-6 mb-4">
-                                <div class="card border-left-danger shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                    Pending Requests</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php
-                                                    $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 0";
-                                                    $result = mysqli_query($database, $sql);
-                                                    $count = mysqli_num_rows($result);
-                                                    echo $count;
-                                                    ?>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
+                </div>
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total Sessions</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <?php
+                                        $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
+                                        $result = mysqli_query($database, $sql);
+                                        $count = mysqli_num_rows($result);
+                                        echo $count;
+                                        ?>
+
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-4 col-md-6 mb-4">
-                                <div class="card border-left-primary shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    Total Sessions</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php
-
-                                                    $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
-                                                    $result = mysqli_query($database, $sql);
-                                                    $count = mysqli_num_rows($result);
-                                                    echo $count;
-
-
-                                                    ?>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4 col-md-6 mb-4">
-                                <div class="card border-left-warning shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                    Total of Tutees</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php
-
-                                                    // check the unique tutee id in tbl_request and count the number of unique tutee id
-                                                    $sql = "SELECT DISTINCT tuteeid FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
-                                                    $result = mysqli_query($database, $sql);
-                                                    $count = mysqli_num_rows($result);
-                                                    echo $count;
-
-
-                                                    ?>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
-
-                        
                     </div>
                 </div>
 
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Total of Tutees</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <?php
+
+                                        // check the unique tutee id in tbl_request and count the number of unique tutee id
+                                        $sql = "SELECT DISTINCT tuteeid FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
+                                        $result = mysqli_query($database, $sql);
+                                        $count = mysqli_num_rows($result);
+                                        echo $count;
 
 
-
-
-            <!-- /.container-fluid -->
-
-        </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2020</span>
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
-        <!-- End of Footer -->
+            <div class="row">
+                <div class="col-xl-8 col-md-6 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">My Schedule</h6>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addScheduleModal">
+                                Add Schedule
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Topic</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                            <th>Duration</th>
+                                            <th>Start Time - End Time</th>
+                                            <th>Slot</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="justify-content-around">
+                                        <?php
+                                            $sql = "SELECT * FROM tbl_schedule WHERE tutorid = '$tutorid'";
+                                            $result = mysqli_query($database, $sql);
+                                            while($row = mysqli_fetch_assoc($result)) {
 
-    </div>
-    <!-- End of Content Wrapper -->
+                                                $scheduleid = $row['scheduleid'];
+                                                $topic = $row['topic'];
+                                                $description = $row['description'];
+                                                $date = $row['date'];
+                                                $start_time = $row['start_time'];
+                                                $end_time = $row['end_time'];
+                                                $slot_avail = $row['max_tutee'];
 
-</div>
-<!-- End of Page Wrapper -->
+                                                // get the hours between start time and end time and duration of the session
+                                                $start = new DateTime($start_time);
+                                                $end = new DateTime($end_time);
+                                                $duration = $start->diff($end);
+                                                $duration = $duration->format('%h');
 
-<!-- Scroll to Top Button-->
+                                                //format date to more readable format
+                                                $date = date("d M Y", strtotime($date));
+
+                                                //remove the seconds from the time
+                                                $start_time = date("h:i A", strtotime($start_time));
+                                                $end_time = date("h:i A", strtotime($end_time));
+
+                                                // make slot available to be more readable
+                                                if ($slot_avail == 0) {
+                                                    $slot_avail = "Full";
+                                                } else {
+                                                    $slot_avail = $slot_avail . " slots available";
+                                                }
+
+                                                echo "<tr>";
+                                                echo "<td>$topic</td>";
+                                                echo "<td>$description</td>";
+                                                echo "<td>$date</td>";
+                                                echo "<td>$duration <b>Hours</b></td>";
+                                                echo "<td>$start_time - $end_time</td>";
+                                                echo "<td>$slot_avail</td>";
+                                                echo "</tr>";
+                                            }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
+                if (isset($_POST['addSchedule'])) {
+                    // retrieve form data
+                    $topic = $_POST['topic'];
+                    $description = $_POST['description'];
+                    $date = $_POST['date'];
+                    $start_time = $_POST['start_time'];
+                    $end_time = $_POST['end_time'];
+                    $max_tutee = $_POST['max_tutee'];
+
+                    // insert the data into the table
+                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, end_time, max_tutee, tutorid)
+            VALUES ('$topic', '$description', '$date', '$start_time', '$end_time', '$max_tutee', '$tutorid')";
+                    $result1 = mysqli_query($database, $sql);
+
+                    // check if insertion was successful
+                    if ($result1) {
+                        echo "<script>alert('Schedule added successfully!')</script>";
+                        echo "<script>window.location.href='index.php'</script>";
+                    } else {
+                        echo "<script>alert('Schedule failed to add!')</script>";
+                        echo "<script>window.location.href='index.php'</script>";
+                    }
+
+                    // close the database connection
+                    mysqli_close($database);
+                }
+                ?>
+
+
+                <!--                modal-->
+                <!-- Schedule form modal -->
+                <div class="modal fade" id="addScheduleModal" tabindex="-1" role="dialog" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedule</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="" method="POST">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="topic">Topic</label>
+                                        <input type="text" class="form-control" id="topic" name="topic" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">Date</label>
+                                        <input type="date" class="form-control" id="date" name="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="start_time">Start Time</label>
+                                        <input type="time" class="form-control" id="start_time" name="start_time" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="end_time">End Time</label>
+                                        <input type="time" class="form-control" id="end_time" name="end_time" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="max_tutee">Max Tutee</label>
+                                        <input type="number" class="form-control" id="max_tutee" name="max_tutee" min="1" max="50" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" name="addSchedule">Add Schedule</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert message -->
+                <?php if(isset($_SESSION['scheduleAdded'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo $_SESSION['scheduleAdded']; ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <?php unset($_SESSION['scheduleAdded']); ?>
+                <?php endif; ?>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">This Week Schedule</h6>
+                        </div>
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
