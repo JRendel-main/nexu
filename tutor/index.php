@@ -405,15 +405,13 @@ if(isset($_SESSION["username"])){
                                                     </td>
                                                     ";
                                                 echo "<td>
-                                                       <button class='btn btn-primary' data-toggle='modal' data-target='#editScheduleModal' data-scheduleid='$scheduleid'>
-                                                        <i class='fas fa-edit'>
-                                                        </i>
-                                                        
+                                                        <button data-scheduleid='$scheduleid' class='btn btn-primary btn-circle edit-sched' data-toggle='modal' data-target='#editScheduleModal'>
+                                                            <i class='fas fa-edit'></i>
                                                         </button>
-                                                        <hr class=''>
-                                                        <button class='btn btn-danger' data-toggle='modal' data-target='#deleteScheduleModal' data-scheduleid='$scheduleid'>
+                                                        <button data-scheduleid='$scheduleid' class='btn btn-danger btn-circle delete-sched' data-toggle='modal' data-target='#deleteScheduleModal'>
                                                             <i class='fas fa-trash'></i>
                                                         </button>
+
                                                     </td>";
                                                 echo "</tr>";
                                             }
@@ -424,19 +422,6 @@ if(isset($_SESSION["username"])){
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    $(document).ready(function() {
-                        // Listen for button click event
-                        $('#editScheduleBtn').click(function() {
-                            // Get the scheduleid attribute value
-                            var scheduleid = $(this).data('scheduleid');
-
-                            // Set the value to the hidden input field inside the modal
-                            $('#scheduleid').val(scheduleid);
-                        });
-                    });
-                </script>
 
                 <?php
                 if (isset($_POST['addSchedule'])) {
@@ -464,9 +449,6 @@ if(isset($_SESSION["username"])){
                 }
                 ?>
 
-
-                <!--                modal-->
-                <!-- Schedule form modal -->
                 <div class="modal fade" id="addScheduleModal" tabindex="-1" role="dialog" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -516,7 +498,7 @@ if(isset($_SESSION["username"])){
                 <div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form action="edit_schedule.php" method="post">
+                            <form  method="post">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="editModalLabel">Edit Schedule</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -524,46 +506,28 @@ if(isset($_SESSION["username"])){
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="hidden" name="scheduleid" id="scheduleid">
-                                    <!-- Add inputs for editing schedule details here -->
-                                    <?php
-                                    $sql = "SELECT * FROM tbl_schedule WHERE scheduleid = '$scheduleid'";
-                                    $result = mysqli_query($database, $sql);
-                                    $row = mysqli_fetch_assoc($result);
-
-                                    $topic1 = $row['topic'];
-                                    $description1 = $row['description'];
-                                    $date1 = $row['date'];
-                                    $start_time1 = $row['start_time'];
-                                    $end_time1 = $row['end_time'];
-                                    $max_tutee1 = $row['max_tutee'];
-
-                                    echo "<div class='form-group'>
+                                    <div class='form-group'>
                                         <label for='topic'>Topic</label>
-                                        <input type='text' class='form-control' id='topic' name='topic' value='$topic1' required>
-                                    </div>";
-                                    echo "<div class='form-group'>
+                                        <input type='text' class='form-control' id='topic' name='topic' required>
+                                    </div>
+                                    <div class='form-group'>
                                         <label for='description'>Description</label>
-                                        <textarea class='form-control' id='description' name='description' rows='3' required>$description1</textarea>";
-                                    echo "<div class='form-group'>
+                                        <textarea class='form-control' id='description' name='description' rows='3' required></textarea>
+                                    <div class='form-group'>
                                             <label for='date'>Date</label>
-                                            <input type='date' class='form-control' id='date' name='date' value='$date1' required>
-                                          </div>";
-                                    echo "<div class='form-group-row'>
-                                            <label for='start_time'>Start Time</label>
-                                            <input type='time' class='form-control' id='start_time' value='$start_time1' required>
-                                            <label for='end_time'>End Time</label>
-                                            <input type='time' class='form-control' id='end_time' value='$end_time1' required>
+                                            <input type='date' class='form-control' id='date' name='date' required>
                                           </div>
-                                        ";
-                                    echo "<div class='form-group'>
+                                    <div class='form-group-row'>
+                                            <label for='start_time'>Start Time</label>
+                                            <input type='time' class='form-control' id='start_time' required>
+                                            <label for='end_time'>End Time</label>
+                                            <input type='time' class='form-control' id='end_time' required>
+                                          </div>
+                                    <div class='form-group'>
                                             <label for='max_tutee'>Max Tutee</label>
-                                            <input type='number' class='form-control' value='$max_tutee1' required>            
+                                            <input type='number' class='form-control' required>
                                           </div>     
-                                    ";
-                                    echo '</div>';
-                                    ?>
-
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -573,6 +537,8 @@ if(isset($_SESSION["username"])){
                         </div>
                     </div>
                 </div>
+            <script>
+            </script>
 
                 <!-- Delete Modal -->
                 <div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -622,8 +588,28 @@ if(isset($_SESSION["username"])){
                 </div>
             </div>
         </div>
+            <script>
+                $(document).ready(function() {
+                    // Handle click event for edit button
+                    $('.edit-schedule-btn').click(function() {
+                        // Get the scheduleid from the button's data-scheduleid attribute
+                        var scheduleid = $(this).data('scheduleid');
+                        // Set the value of the hidden input field in the modal form
+                        $('#editScheduleModal #scheduleid').val(scheduleid);
+                    });
 
-<a class="scroll-to-top rounded" href="#page-top">
+                    // Handle click event for delete button
+                    $('.delete-schedule-btn').click(function() {
+                        // Get the scheduleid from the button's data-scheduleid attribute
+                        var scheduleid = $(this).data('scheduleid');
+                        // Set the value of the hidden input field in the modal form
+                        $('#deleteScheduleModal #scheduleid').val(scheduleid);
+                    });
+                });
+            </script>
+
+
+            <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
 
