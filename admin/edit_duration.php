@@ -43,7 +43,7 @@ if(isset($_SESSION["username"])){
 
                 <!-- Topbar Search -->
                 <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
                         <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                aria-label="Search" aria-describedby="basic-addon2">
@@ -249,8 +249,17 @@ if(isset($_SESSION["username"])){
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <!-- Page Heading --> 
-                <div class="card shadow mb-4">
+            <?php if (isset($alert_msg) && isset($alert_style)): ?>
+                    <div class=row>
+                        <div class="alert alert-<?php echo $alert_style; ?> alert-dismissible fade show" role="alert">
+                            <?php echo $alert_msg; ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Tutee - Approval Requests</h6>
                     </div>
@@ -259,12 +268,11 @@ if(isset($_SESSION["username"])){
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
-                                    <th>Student Number</th>
+                                    <th>Tutor ID</th>
                                     <th>Fullname</th>
-                                    <th>Email Address</th>
-                                    <th>Course</th>
-                                    <th>Year</th>
-                                    <th>Action</th>
+                                    <th>Year - Course</th>
+                                    <th>Number of Tutee</th>
+                                    <th>Duration</th>
                                 </tr>
                                 </thead>
 
@@ -299,25 +307,36 @@ if(isset($_SESSION["username"])){
 
 
                                 $sql = "SELECT * FROM tbl_auth 
-                                                JOIN tbl_tutee ON tbl_auth.auth_id = tbl_tutee.auth_id
-                                                WHERE tbl_auth.acc_status = 0";
+                                                JOIN tbl_tutor ON tbl_auth.auth_id = tbl_tutor.auth_id
+                                                WHERE tbl_auth.acc_status = 1";
                                 $result = mysqli_query($database, $sql);
 
                                 while ($row = mysqli_fetch_assoc($result)) {
-                                    $tutee_stunum = $row['tutee_stunum'];
-                                    $tutee_fname = $row['tutee_fname'];
-                                    $tutee_lname = $row['tutee_lname'];
-                                    $tutee_email = $row['tutee_email'];
-                                    $tutee_course = $row['tutee_course'];
-                                    $tutee_year = $row['tutee_year'];
+                                    $tutorid = $row['tutorid'];
+                                    $tutor_fname = $row['tutor_fname'];
+                                    $tutor_lname = $row['tutor_lname'];
+                                    $tutor_year = $row['tutor_year'];
+                                    $tutor_course = $row['tutor_course'];
+                                    $duration = $row['allowed_schedule'];
+
+                                    // count number of tutors based on how many are request_status 1 from tbl_requests
+                                    $sql2 = "SELECT COUNT(*) AS num_tutee FROM tbl_request WHERE request_status = 1 AND tutorid = $tutorid";
+                                    $result2 = mysqli_query($database, $sql2);
+                                    $row2 = mysqli_fetch_assoc($result2);
+                                    // get the result
+                                    $num_tutee = $row2['num_tutee'];
+                            
 
                                     echo "<tr>";
-                                    echo "<td>$tutee_stunum</td>";
-                                    echo "<td>$tutee_fname $tutee_lname</td>";
-                                    echo "<td>$tutee_email</td>";
-                                    echo "<td>$tutee_course</td>";
-                                    echo "<td>$tutee_year</td>";
-                                    echo "<td><a href='approve.php?auth_id={$row['auth_id']}' class='btn btn-success'>Approve</a> <a href='deny.php?auth_id={$row['auth_id']}' class='btn btn-danger'>Deny</a></td>";
+                                    echo "<td>$tutorid</td>";
+                                    echo "<td>$tutor_fname $tutor_lname</td>";
+                                    echo "<td>$tutor_year - $tutor_course</td>";
+                                    echo "<td>$num_tutee <b> Students</b></td>";
+                                    echo '<td> <strong>' . $duration . '</strong> Hours 
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editDurationModal" data-tutorid="'.$tutorid.'" >
+                                        <i class="fas fa-edit"></i>
+                                </button>
+                                    </td>';
                                     echo "</tr>";
                                 }
 
@@ -327,28 +346,67 @@ if(isset($_SESSION["username"])){
                             </table>
                         </div>
                     </div>
-                </div>
-
-
-                <!-- /.container-fluid -->
-
             </div>
 
+            <div class="modal fade" id="editDurationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit Duration</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="schedule-details">
+                            </div>
+                            </div>
+                        </div>
+                    </div>
 
+                <script>
+                    $(document).ready(function () {
+                        $('#editDurationModal').on('show.bs.modal', function (event) {
+                            console.log('Modal Opened');
+                            let button = $(event.relatedTarget);
+                            let tutorid = button.data('tutorid');
+                            let modal = $(this);
+                            console.log(tutorid);
+                            // Make an AJAX request to get the tutor details
+                            $.ajax({
+                                type: 'POST',
+                                url: 'fetch_duration_detail.php',
+                                data: { tutorid: tutorid },
+                                success: function (data) {
+                                    modal.find('.modal-body').html(data);
+                                    modal.find('#editDurationbtn').data('tutorid', tutorid);
+                                    // get the data back
+                                },
+                                error: function () {
+                                    alert('Error getting tutor details');
+                                }
+                            });
+                        });
+                        $('#dataTable').DataTable( {
+                        responive: true,
+                        autoFill: true
+                    });
+                    });
+                </script>
 
+        
             <!-- /.container-fluid -->
 
-            <!-- End of Main Content -->
+        <!-- End of Main Content -->
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Nexus Link 2023</span>
-                    </div>
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Nexus Link 2023</span>
                 </div>
-            </footer>
-            <!-- End of Footer -->
+            </div>
+        </footer>
+        <!-- End of Footer -->
         </div>
 
     </div>

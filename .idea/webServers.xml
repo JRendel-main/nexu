@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d6f7a60e-4640-40db-a7f4-c7da64ab12c0" name="xampp" url="http://localhost/nexu">
+        <fileTransfer mountedRoot="C:\xampp\htdocs\nexu" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

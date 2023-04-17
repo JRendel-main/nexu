@@ -41,9 +41,18 @@
                 <a class="collapse-item" href="tutee_approval.php">Tutee</a>
             </div>
         </div>
+        <li class="nav-item">
+        <a class="nav-link" href="edit_duration.php">
+            <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+            <span> Edit Duration</span></a>
+    </li>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
+    <div class="sidebar-heading">
+        Account Settings
+    </div>
+    
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

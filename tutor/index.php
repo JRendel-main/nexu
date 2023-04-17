@@ -379,37 +379,32 @@ if(isset($_SESSION["username"])){
                                                 $description = $row['description'];
                                                 $date = $row['date'];
                                                 $start_time = $row['start_time'];
-                                                $end_time = $row['end_time'];
+                                                $duration = $row['duration'];
                                                 $slot_avail = $row['max_tutee'];
 
                                                 // get the hours between start time and end time and duration of the session
                                                 $start = new DateTime($start_time);
-                                                $end = new DateTime($end_time);
-                                                $duration = $start->diff($end);
-                                                $duration = $duration->format('%h');
 
                                                 //format date to more readable format
                                                 $date = date("d M Y", strtotime($date));
 
                                                 //remove the seconds from the time
                                                 $start_time = date("h:i A", strtotime($start_time));
-                                                $end_time = date("h:i A", strtotime($end_time));
 
                                                 // make slot available to be more readable
                                                 if ($slot_avail == 0) {
-                                                    $slot_avail = "Full";
+                                                    $alert_type = "danger";
                                                 } else {
-                                                    $slot_avail = $slot_avail . " slots available";
+                                                    $alert_type = "success";
                                                 }
                                                 echo "<tr>";
                                                 echo "<td>$topic</td>";
                                                 echo "<td>$description</td>";
                                                 echo "<td>$date</td>";
                                                 echo "<td>$duration <b>Hours</b></td>";
-                                                echo "<td>$start_time - $end_time</td>";
-                                                echo "<td data-toggle='tooltip' data-placement='top' title='$slot_avail'
-                                                        class='text-center'>
-                                                        $slot_avail
+                                                echo "<td>$start_time</td>";
+                                                echo "<td>
+                                                        <span class='badge badge-success'>$slot_avail Available Slot</span>
                                                     </td>
                                                     ";
                                                 echo "<td>";
@@ -437,10 +432,15 @@ if(isset($_SESSION["username"])){
                     $start_time = $_POST['start_time'];
                     $end_time = $_POST['end_time'];
                     $max_tutee = $_POST['max_tutee'];
+                    // get the allowed duration to tbl_tutor table
+                    $sql = "SELECT duration FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                    $result = mysqli_query($database, $sql);
+                    $row = mysqli_fetch_assoc($result);
+                    $duration = $row['duration'];
 
                     // insert the data into the table
                     $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, end_time, max_tutee, tutorid)
-            VALUES ('$topic', '$description', '$date', '$start_time', '$end_time', '$max_tutee', '$tutorid')";
+                VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$max_tutee', '$tutorid')";
                     $result1 = mysqli_query($database, $sql);
 
                     // check if insertion was successful
@@ -458,7 +458,7 @@ if(isset($_SESSION["username"])){
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedules</h5>
+                                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedule</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -466,27 +466,29 @@ if(isset($_SESSION["username"])){
                             <form action="" method="POST">
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <label for="topic">Topic</label>
+                                        <label for="topic">Topic:</label>
                                         <input type="text" class="form-control" id="topic" name="topic" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="description">Description</label>
+                                        <label for="description">Description:</label>
                                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label for="date">Date</label>
+                                        <label for="date">Date:</label>
                                         <input type="date" class="form-control" id="date" name="date" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="start_time">Start Time</label>
+                                        <label for="start_time">Start Time:</label>
                                         <input type="time" class="form-control" id="start_time" name="start_time" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="end_time">End Time</label>
-                                        <input type="time" class="form-control" id="end_time" name="end_time" required>
+                                        <label for="end_time">Duration:</label>
+                                        <div class="alert alert-warning" role="alert">
+                                            You are allowed only to tutor for <b><?php echo $duration; ?> hours</b> per session.
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="max_tutee">Max Tutee</label>
+                                        <label for="max_tutee">Max Tutee:</label>
                                         <input type="number" class="form-control" id="max_tutee" name="max_tutee" min="1" max="50" required>
                                     </div>
                                     <input type="hidden" id="scheduleid" name="scheduleid">
@@ -510,12 +512,10 @@ if(isset($_SESSION["username"])){
                                 </button>
                             </div>
                             <div class="modal-body" id="schedule-details">
-                                
                             </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
                 <script>
                     $(document).ready(function () {
@@ -609,7 +609,34 @@ if(isset($_SESSION["username"])){
                             <h6 class="m-0 font-weight-bold text-primary">This Week Schedule</h6>
                         </div>
                         <div class="card-body">
-
+<!--                            add table for this week schedule-->
+                            <table class="table table-hover no-shadow">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Day</th>
+                                    <th scope="col">Start Time</th>
+                                    <th scope="col">Topic</th>
+                                    <th scope="col">Duration</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+                                $endOfWeek = date('Y-m-d', strtotime('sunday this week'));
+                                $sql = "SELECT * FROM tbl_schedule WHERE tutorid = '$tutorid' AND date BETWEEN '$startOfWeek' AND '$endOfWeek'";
+                                $result = mysqli_query($database, $sql);
+                                while($row = mysqli_fetch_assoc($result)):
+                                    $day = date('l', strtotime($row['date']));
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $day; ?></td>
+                                        <td><?php echo $row['start_time']; ?></td>
+                                        <td><?php echo $row['duration']; ?></td>
+                                        <td><?php echo $row['topic']; ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

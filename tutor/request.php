@@ -264,14 +264,15 @@ if(isset($_SESSION["username"])){
                                         <th>Description</th>
                                         <th>Fullname</th>
                                         <th>Course - Year</th>
-                                        <th>Time In - Timeout</th>
+                                        <th>Time Start</th>
+                                        <th>Duration</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php
                                     // Your existing PHP code for fetching the data from the database
-                                    $sql = "SELECT s.topic, s.description, r.requestid, t.tutee_fname, t.tutee_mname, t.tutee_lname, t.tutee_course, t.tutee_year, s.start_time, s.end_time, s.date
+                                    $sql = "SELECT s.topic, s.description, r.requestid, t.tutee_fname, t.tutee_mname, t.tutee_lname, t.tutee_course, t.tutee_year, s.start_time, s.duration, s.date
                                             FROM tbl_schedule s, tbl_tutee t, tbl_request r
                                             WHERE s.scheduleid = r.scheduleid
                                             AND t.tuteeid = r.tuteeid
@@ -285,12 +286,11 @@ if(isset($_SESSION["username"])){
                                         $fullname = $row['tutee_fname'] . ' ' . $row['tutee_mname'] . ' ' . $row['tutee_lname'];
                                         $course = $row['tutee_course'] . ' - ' . $row['tutee_year'];
                                         $start_time = $row['start_time'];
-                                        $end_time = $row['end_time'];
                                         $date = $row['date'];
+                                        $duration = $row['duration'];
                                         $requestid = $row['requestid'];
 
                                         $start_time = date('M d, Y - h:i A', strtotime($row['date'] . ' ' . $row['start_time']));
-                                        $end_time = date('M d, Y - h:i A', strtotime(' ' . $row['end_time']));
 
                                         // Output the data in the table row
                                         echo "<tr>";
@@ -298,7 +298,8 @@ if(isset($_SESSION["username"])){
                                         echo "<td>$description</td>";
                                         echo "<td>$fullname</td>";
                                         echo "<td>$course</td>";
-                                        echo "<td>$start_time / $end_time</td>";
+                                        echo "<td>$start_time</td>";
+                                        echo "<td>$duration Hours</td>";
                                         echo "<td>
                                                 <a href='accept_request.php?requestid=$requestid' class='btn btn-success btn-circle btn-sm'>
                                                     <i class='fas fa-check'></i>

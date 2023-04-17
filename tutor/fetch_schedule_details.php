@@ -19,10 +19,10 @@ if ($result->num_rows > 0) {
     $html .= '<input type="date" class="form-control" id="date" name="date" value="' . $row["date"] . '">';
     $html .= '<label for="start_time">Start Time:</label>';
     $html .= '<input type="time" class="form-control" id="start_time" name="start_time" value="' . $row["start_time"] . '">';
-    $html .= '<label for="end_time">End Time:</label>';
-    $html .= '<input type="time" class="form-control" id="end_time" name="end_time" value="' . $row["end_time"] . '">';
+    $html .= '<label for="end_time">Duration:</label>';
+    $html .= '<input type="number" class="form-control" id="end_time" name="end_time" value="' . $row["duration"] . '" placeholder="Duration can only be set by admin!" readonly>';
     $html .= '<label for="max_tutee">Max Tutee:</label>';
-    $html .= '<input type="number" class="form-control" id="max_tutee" name="max_tutee" value="' . $row["max_tutee"] . '">';
+    $html .= '<input type="number" class="form-control" id="max_tutee" name="max_tutee" value="' . $row["max_tutee"] . '" min="0">';
     $html .= '<input type="hidden" name="scheduleId" value="' . $row["scheduleid"] . '">';
     
     // set for footer
