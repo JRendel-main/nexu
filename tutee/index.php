@@ -341,6 +341,7 @@ if(isset($_SESSION["username"])){
         $('#exampleModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             var tutorId = button.data('id');
+            console.log(tutorId);
             var modal = $(this);
 
             // Make an AJAX request to get the tutor details

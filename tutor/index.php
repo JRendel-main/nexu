@@ -252,7 +252,16 @@ if(isset($_SESSION["username"])){
                     <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                 </div>
-
+                <?php if (isset($alert_msg) && isset($alert_style)): ?>
+                    <div class=row>
+                        <div class="alert alert-<?php echo $alert_style; ?> alert-dismissible fade show" role="alert">
+                            <?php echo $alert_msg; ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 <div class="row">
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card border-left-danger shadow h-100 py-2">
@@ -392,7 +401,6 @@ if(isset($_SESSION["username"])){
                                                 } else {
                                                     $slot_avail = $slot_avail . " slots available";
                                                 }
-
                                                 echo "<tr>";
                                                 echo "<td>$topic</td>";
                                                 echo "<td>$description</td>";
@@ -404,15 +412,13 @@ if(isset($_SESSION["username"])){
                                                         $slot_avail
                                                     </td>
                                                     ";
-                                                echo "<td>
-                                                        <button data-scheduleid='$scheduleid' class='btn btn-primary btn-circle edit-sched' data-toggle='modal' data-target='#editScheduleModal'>
-                                                            <i class='fas fa-edit'></i>
-                                                        </button>
-                                                        <button data-scheduleid='$scheduleid' class='btn btn-danger btn-circle delete-sched' data-toggle='modal' data-target='#deleteScheduleModal'>
-                                                            <i class='fas fa-trash'></i>
-                                                        </button>
-
-                                                    </td>";
+                                                echo "<td>";
+                                                // add button that will show scheduleid in the modal
+                                                echo '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editScheduleModal" data-scheduleid="' .$row['scheduleid'] .'" >
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>';
+                                                echo "<button type='button' class='btn btn-danger' data-toggle='modal' data-target='#deleteScheduleModal' data-scheduleid='" . $row['scheduleid'] . "'><i class='fas fa-trash'></i></button>";
+                                                echo "</td>";
                                                 echo "</tr>";
                                             }
                                         ?>
@@ -422,7 +428,6 @@ if(isset($_SESSION["username"])){
                         </div>
                     </div>
                 </div>
-
                 <?php
                 if (isset($_POST['addSchedule'])) {
                     // retrieve form data
@@ -453,7 +458,7 @@ if(isset($_SESSION["username"])){
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedule</h5>
+                                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedules</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -484,6 +489,7 @@ if(isset($_SESSION["username"])){
                                         <label for="max_tutee">Max Tutee</label>
                                         <input type="number" class="form-control" id="max_tutee" name="max_tutee" min="1" max="50" required>
                                     </div>
+                                    <input type="hidden" id="scheduleid" name="scheduleid">
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -494,75 +500,96 @@ if(isset($_SESSION["username"])){
                     </div>
                 </div>
 
-                <!-- Edit Modal -->
-                <div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form  method="post">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Edit Schedule</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class='form-group'>
-                                        <label for='topic'>Topic</label>
-                                        <input type='text' class='form-control' id='topic' name='topic' required>
-                                    </div>
-                                    <div class='form-group'>
-                                        <label for='description'>Description</label>
-                                        <textarea class='form-control' id='description' name='description' rows='3' required></textarea>
-                                    <div class='form-group'>
-                                            <label for='date'>Date</label>
-                                            <input type='date' class='form-control' id='date' name='date' required>
-                                          </div>
-                                    <div class='form-group-row'>
-                                            <label for='start_time'>Start Time</label>
-                                            <input type='time' class='form-control' id='start_time' required>
-                                            <label for='end_time'>End Time</label>
-                                            <input type='time' class='form-control' id='end_time' required>
-                                          </div>
-                                    <div class='form-group'>
-                                            <label for='max_tutee'>Max Tutee</label>
-                                            <input type='number' class='form-control' required>
-                                          </div>     
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </form>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit Schedule</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="schedule-details">
+                                
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            <script>
-            </script>
 
-                <!-- Delete Modal -->
-                <div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <script>
+                    $(document).ready(function () {
+                        $('#editScheduleModal').on('show.bs.modal', function (event) {
+                            console.log('Modal Opened');
+                            let button = $(event.relatedTarget);
+                            let scheduleId = button.data('scheduleid');
+                            let modal = $(this);
+                            console.log(scheduleId);
+                            // Make an AJAX request to get the tutor details
+                            $.ajax({
+                                type: 'POST',
+                                url: 'fetch_schedule_details.php',
+                                data: { scheduleId: scheduleId },
+                                success: function (data) {
+                                    modal.find('.modal-body').html(data);
+                                    modal.find('#editSchedulebtn').data('scheduleid', scheduleId);
+                                    // get the data back
+                                },
+                                error: function () {
+                                    alert('Error getting tutor details');
+                                }
+                            });
+                        });
+                    });
+                </script>
+
+                <!-- Deletion Modal -->
+                <div class="modal fade" id="deleteScheduleModal" tabindex="-1" role="dialog" aria-labelledby="deleteScheduleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form action="delete_schedule.php" method="post">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Are you sure you want to delete this schedule?</p>
-                                    <input type="hidden" name="scheduleid" id="delete-scheduleid">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </div>
-                            </form>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteScheduleModalLabel">Confirm Delete</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this schedule?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteSchedule">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    $(document).ready(function() {
+                        // Get the ID of the schedule to delete from the "data-scheduleid" attribute of the delete button
+                        var scheduleId = $("#deleteScheduleModal").data("scheduleid");
+
+                        // When the "Delete" button in the modal is clicked, delete the schedule
+                        $("#confirmDeleteSchedule").click(function() {
+                            $.ajax({
+                                url: "delete_schedule.php",
+                                method: "POST",
+                                data: {scheduleId: scheduleId},
+                                success: function(response) {
+                                    // Reload the page to show the updated schedule list
+                                    location.reload();
+                                },
+                                error: function(xhr, status, error) {
+                                    // Display an error message if the schedule couldn't be deleted
+                                    alert("Error deleting schedule: " + error);
+                                }
+                            });
+                        });
+                    });
+                </script>
+
+
+
 
 
                 <!-- Alert message -->
@@ -587,26 +614,6 @@ if(isset($_SESSION["username"])){
                     </div>
                 </div>
             </div>
-        </div>
-            <script>
-                $(document).ready(function() {
-                    // Handle click event for edit button
-                    $('.edit-schedule-btn').click(function() {
-                        // Get the scheduleid from the button's data-scheduleid attribute
-                        var scheduleid = $(this).data('scheduleid');
-                        // Set the value of the hidden input field in the modal form
-                        $('#editScheduleModal #scheduleid').val(scheduleid);
-                    });
-
-                    // Handle click event for delete button
-                    $('.delete-schedule-btn').click(function() {
-                        // Get the scheduleid from the button's data-scheduleid attribute
-                        var scheduleid = $(this).data('scheduleid');
-                        // Set the value of the hidden input field in the modal form
-                        $('#deleteScheduleModal #scheduleid').val(scheduleid);
-                    });
-                });
-            </script>
 
 
             <a class="scroll-to-top rounded" href="#page-top">
@@ -632,12 +639,5 @@ if(isset($_SESSION["username"])){
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
 
 <?php include 'includes/footer.php'; ?>
