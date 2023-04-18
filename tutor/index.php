@@ -430,16 +430,15 @@ if(isset($_SESSION["username"])){
                     $description = $_POST['description'];
                     $date = $_POST['date'];
                     $start_time = $_POST['start_time'];
-                    $end_time = $_POST['end_time'];
                     $max_tutee = $_POST['max_tutee'];
                     // get the allowed duration to tbl_tutor table
-                    $sql = "SELECT duration FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
-                    $duration = $row['duration'];
+                    $duration = $row['allowed_schedule'];
 
                     // insert the data into the table
-                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, end_time, max_tutee, tutorid)
+                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, duration, max_tutee, tutorid)
                 VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$max_tutee', '$tutorid')";
                     $result1 = mysqli_query($database, $sql);
 
@@ -610,13 +609,13 @@ if(isset($_SESSION["username"])){
                         </div>
                         <div class="card-body">
 <!--                            add table for this week schedule-->
-                            <table class="table table-hover no-shadow">
+                            <table class="table table-hover justify-content-around">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Day</th>
-                                    <th scope="col">Start Time</th>
-                                    <th scope="col">Topic</th>
-                                    <th scope="col">Duration</th>
+                                    <th>Day</th>
+                                    <th>Start Time</th>
+                                    <th>Topic</th>
+                                    <th>Duration</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -627,12 +626,15 @@ if(isset($_SESSION["username"])){
                                 $result = mysqli_query($database, $sql);
                                 while($row = mysqli_fetch_assoc($result)):
                                     $day = date('l', strtotime($row['date']));
+                                    // reformat time remove seconds
+                                    $row['start_time'] = date('h:i A', strtotime($row['start_time']));
+                                    // 
                                     ?>
                                     <tr>
                                         <td><?php echo $day; ?></td>
                                         <td><?php echo $row['start_time']; ?></td>
-                                        <td><?php echo $row['duration']; ?></td>
                                         <td><?php echo $row['topic']; ?></td>
+                                        <td><?php echo $row['duration']; ?> <strong>Hour/s</strong></td>
                                     </tr>
                                 <?php endwhile; ?>
                                 </tbody>
@@ -666,5 +668,81 @@ if(isset($_SESSION["username"])){
         </div>
     </div>
 </div>
+
+<!-- Add the modal markup to your HTML -->
+<div class="modal" tabindex="-1" role="dialog" id="messageModal">
+  <!-- Modal content goes here -->
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Send Message to Admin</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Form for user to input message to admin -->
+        <form id="messageForm">
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea class="form-control" id="message" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add the icon markup to your HTML -->
+<div class="message-icon">
+  <i class="fa fa-comment-o" aria-hidden="true"></i>
+</div>
+<script>
+    // Add the JavaScript code to handle the modal and form submission
+$(document).ready(function() {
+  // Show the modal when the icon is clicked
+  $(".message-icon").on("click", function() {
+    $("#messageModal").modal("show");
+  });
+
+  // Submit the form when the "Send" button is clicked
+  $("#sendMessage").on("click", function() {
+    // Perform form validation here
+    // ...
+    // Submit the form using AJAX or other method
+    // ...
+    // Close the modal after submission
+    $("#messageModal").modal("hide");
+  });
+});
+// Add the JavaScript code to handle the modal, form submission, and animation
+$(document).ready(function() {
+  // Show the modal when the icon is clicked
+  $(".message-icon").on("click", function() {
+    // Add animation effect
+    $(this).css("transform", "scale(1.1)");
+    setTimeout(function() {
+      $(".message-icon").css("transform", "scale(1)");
+    }, 300);
+    
+    $("#messageModal").modal("show");
+  });
+
+  // Submit the form when the "Send" button is clicked
+  $("#sendMessage").on("click", function() {
+    // Perform form validation here
+    // ...
+    // Submit the form using AJAX or other method
+    // ...
+    // Close the modal after submission
+    $("#messageModal").modal("hide");
+  });
+});
+
+</script>
 
 <?php include 'includes/footer.php'; ?>
