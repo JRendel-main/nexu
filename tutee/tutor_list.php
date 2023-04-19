@@ -33,6 +33,43 @@ if(isset($_SESSION["username"])){
         -webkit-transform: translate(0, 0);
         transform: translate(0, 0);
     }
+    .badge {
+    padding: 5px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+}
+
+.btn-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active {
+    box-shadow: 0 3px 7px rgb(109 199 122 / 50%) !important;
+}
+.btn-primary, .btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active, .bg-soft-primary .border, .alert-primary, .alert-outline-primary, .badge-outline-primary, .nav-pills .nav-link.active, .pagination .active a, .form-group .form-control:focus, .form-group .form-control.active, .custom-control-input:checked ~ .custom-control-label:before, .custom-control-input:focus ~ .custom-control-label::before, .form-control:focus, .social-icon li a:hover, #topnav .has-submenu.active.active .menu-arrow, #topnav.scroll .navigation-menu > li:hover > .menu-arrow, #topnav.scroll .navigation-menu > li.active > .menu-arrow, #topnav .navigation-menu > li:hover > .menu-arrow, .flatpickr-day.selected, .flatpickr-day.selected:hover, .form-check-input:focus, .form-check-input.form-check-input:checked, .container-filter li.active, .container-filter li:hover {
+    border-color: #6dc77a !important;
+}
+.bg-primary, .btn-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active, .badge-primary, .nav-pills .nav-link.active, .pagination .active a, .custom-control-input:checked ~ .custom-control-label:before, #preloader #status .spinner > div, .social-icon li a:hover, .back-to-top:hover, .back-to-home a, ::selection, #topnav .navbar-toggle.open span:hover, .owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots.clickable .owl-dot:hover span, .watch-video a .play-icon-circle, .sidebar .widget .tagcloud > a:hover, .flatpickr-day.selected, .flatpickr-day.selected:hover, .tns-nav button.tns-nav-active, .form-check-input.form-check-input:checked {
+    background-color: #6dc77a !important;
+}
+.btn {
+    padding: 8px 20px;
+    outline: none;
+    text-decoration: none;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    font-weight: 600;
+    border-radius: 5px;
+}
+.btn-primary {
+    background-color: #6dc77a !important;
+    border: 1px solid #6dc77a !important;
+    color: #fff !important;
+    box-shadow: 0 3px 7px rgb(109 199 122 / 50%);
+}
+
+a {
+text-decoration:none;    
+}
+
 
 </style>
 <!-- Page Wrapper -->
@@ -150,7 +187,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">123131</span>
+                            <span class="badge badge-danger badge-counter">5</span>
                         </a>
                         <!-- Dropdown - Messages -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -263,8 +300,63 @@ if(isset($_SESSION["username"])){
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Tutor List</h1>
+                </div>
+                    <?php if (isset($alert_msg) && isset($alert_style)): ?>
+                        <div class=row>
+                            <div class="alert alert-<?php echo $alert_style; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $alert_msg; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php
+                        //get the list of tutor from tbl_tutor where their auth_status is 1 from tbl_auth using auth_id
+                        $sql = "SELECT * FROM tbl_tutor INNER JOIN tbl_auth ON tbl_tutor.auth_id = tbl_auth.auth_id WHERE tbl_auth.acc_status = 1";
+                        $result = mysqli_query($database, $sql);
+
+                        while($row = mysqli_fetch_assoc($result)) {
+                            $tutor_fname = $row['tutor_fname'];
+                            $tutor_mname = $row['tutor_mname'];
+                            $tutor_lname = $row['tutor_lname'];
+                            $tutor_bio = $row['tutor_bio'];
+                            $tutor_email = $row['tutor_email'];
+                            $fullname = $tutor_fname . ' ' . $tutor_mname . ' ' . $tutor_lname;
+                            echo '
+                            <div class="row">
+                            <div class="col-lg-3 col-md-6 col-12 mt-2 pt-8">
+                                <div class="card border-0 bg-light rounded shadow">
+                                    <div class="card-body p-4">
+                                    <img src="../img/undraw_profile_1.svg" class="card-img-top rounded-circle" alt="Profile Picture" style="height: 80px; width: 80px;">
+                                        <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">Full time</span>
+                                        <span class="badge rounded-pill bg-danger float-md-end mb-3 mb-sm-0">Part time</span>
+                                        <h5>' . $fullname . '</h5>
+                                        <div class="mt-3">
+                                            <span class="text-muted d-block"><i class="fa fa-email" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">Bootdey.com LLC.</a></span>
+                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> USA</span>
+                                        </div>
+                                        <div class="mt-3">
+                                            <?php echo $bio; ?>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button href="#" class="btn btn-primary">View Details</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            
+                            ';
+                        }
+
+
+
+                        ?>
+
             </div>
-                
         </div>
         <!-- End of Main Content -->
 

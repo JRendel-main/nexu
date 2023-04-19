@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar" style="width: 200px;"    >
+<ul class="navbar-nav bg-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -15,8 +15,7 @@
     <!-- Nav Item - Dashboard -->
     <li class="nav-item">
         <a class="nav-link" href="index.php">
-            <!-- add dashboard icon -->
-            <i class="fas fa-fw fa-calendar"></i>
+            <i class="fas fa-fw fa-tachometer-alt"></i>
             <span> Tutor - Dashboard</span></a>
     </li>
 
@@ -56,3 +55,4 @@
 
 </ul>
 <!-- End of Sidebar -->
+<!-- Chat Widget -->

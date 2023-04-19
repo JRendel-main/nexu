@@ -430,15 +430,16 @@ if(isset($_SESSION["username"])){
                     $description = $_POST['description'];
                     $date = $_POST['date'];
                     $start_time = $_POST['start_time'];
+                    $end_time = $_POST['end_time'];
                     $max_tutee = $_POST['max_tutee'];
                     // get the allowed duration to tbl_tutor table
-                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                    $sql = "SELECT duration FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
-                    $duration = $row['allowed_schedule'];
+                    $duration = $row['duration'];
 
                     // insert the data into the table
-                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, duration, max_tutee, tutorid)
+                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, end_time, max_tutee, tutorid)
                 VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$max_tutee', '$tutorid')";
                     $result1 = mysqli_query($database, $sql);
 
@@ -562,7 +563,6 @@ if(isset($_SESSION["username"])){
                         </div>
                     </div>
                 </div>
-
                 <script>
                     $(document).ready(function() {
                         // Get the ID of the schedule to delete from the "data-scheduleid" attribute of the delete button
@@ -586,11 +586,6 @@ if(isset($_SESSION["username"])){
                         });
                     });
                 </script>
-
-
-
-
-
                 <!-- Alert message -->
                 <?php if(isset($_SESSION['scheduleAdded'])): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -609,13 +604,13 @@ if(isset($_SESSION["username"])){
                         </div>
                         <div class="card-body">
 <!--                            add table for this week schedule-->
-                            <table class="table table-hover justify-content-around">
+                            <table class="table table-hover no-shadow">
                                 <thead>
                                 <tr>
-                                    <th>Day</th>
-                                    <th>Start Time</th>
-                                    <th>Topic</th>
-                                    <th>Duration</th>
+                                    <th scope="col">Day</th>
+                                    <th scope="col">Start Time</th>
+                                    <th scope="col">Topic</th>
+                                    <th scope="col">Duration</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -626,15 +621,20 @@ if(isset($_SESSION["username"])){
                                 $result = mysqli_query($database, $sql);
                                 while($row = mysqli_fetch_assoc($result)):
                                     $day = date('l', strtotime($row['date']));
-                                    // reformat time remove seconds
+                                    //reforamt the start time remove seconds
                                     $row['start_time'] = date('h:i A', strtotime($row['start_time']));
-                                    // 
+                                    // add indicator if pm or am change color accordingly
+                                    if (strpos($row['start_time'], 'PM') !== false) {
+                                        $row['start_time'] = '<span class="text-danger">'.$row['start_time'].'</span>';
+                                    } else {
+                                        $row['start_time'] = '<span class="text-success">'.$row['start_time'].'</span>';
+                                    }
                                     ?>
                                     <tr>
                                         <td><?php echo $day; ?></td>
                                         <td><?php echo $row['start_time']; ?></td>
                                         <td><?php echo $row['topic']; ?></td>
-                                        <td><?php echo $row['duration']; ?> <strong>Hour/s</strong></td>
+                                        <td><?php echo $row['duration']; ?> <strong>Hours</strong></td>
                                     </tr>
                                 <?php endwhile; ?>
                                 </tbody>
@@ -644,10 +644,88 @@ if(isset($_SESSION["username"])){
                 </div>
             </div>
 
+            <?php
+            // Get the tutor's schedule
+            $catid = 1;
+            // get if post submitted
+            if (isset($_POST['contactadmin-submit'])) {
+                // get date and time now
+                $date = date('Y-m-d');
+                $time = date('H:i:s');
 
-            <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
+                $datetime = $date.' '.$time;
+                // get the message and image
+                $message = $_POST['message'];
+                $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                // remove the name of image 
+
+                // change the name of image to datetime and save to folder remove the original name
+                $imageName = date('YmdHis').'.'.$imageExtension;
+                $target = "../img/".$imageName;
+                move_uploaded_file($_FILES['image']['tmp_name'], $target);
+                // get the directory and save to database
+                $image = "../img/".$imageName;
+                // insert the message and image to the database
+                $sql = "INSERT INTO tbl_message (id, catid, message, image, date) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime')";
+                $result = mysqli_query($database, $sql);
+                // check if the message inserted
+                if ($result) {
+                    // display javascript alert
+                    echo '<script>alert("Message sent successfully!")</script>';
+                } else {
+                    // display javascript alert
+                    echo '<script>alert("Message not sent!")</script>';
+                }
+            }
+            ?>
+
+            <!-- Add the modal HTML code to your page -->
+<div class="modal" id="messageModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Message Admin</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form enctype="multipart/form-data" name="contactadmin" method="POST">
+                    <div class="form-group">
+                        <label for="message">Message:</label>
+                        <textarea class="form-control" id="message" name="message" rows="5"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Image:</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png">
+                    </div>
+                    <button type="submit" name="contactadmin-submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add the modal trigger button/icon to your page -->
+<a href="#" id="messageModalTrigger" class="btn btn-primary rounded-circle position-fixed" style="bottom: 20px; right: 20px; z-index: 9999;">
+    <i class="fas fa-envelope"></i>
 </a>
+
+<!-- Add the required CSS and JS for the modal and animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<script src="https://kit.fontawesome.com/c7e3b0d05b.js" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        // Add animation to the modal
+        $("#messageModal").addClass("animate__animated animate__bounceInRight");
+
+        // Show/hide the modal when the trigger button/icon is clicked
+        $("#messageModalTrigger").click(function() {
+            $("#messageModal").modal("toggle");
+        });
+    });
+</script>
+
 
 <!-- Logout Modal-->
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -669,80 +747,5 @@ if(isset($_SESSION["username"])){
     </div>
 </div>
 
-<!-- Add the modal markup to your HTML -->
-<div class="modal" tabindex="-1" role="dialog" id="messageModal">
-  <!-- Modal content goes here -->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Send Message to Admin</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Form for user to input message to admin -->
-        <form id="messageForm">
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea class="form-control" id="message" rows="3"></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Add the icon markup to your HTML -->
-<div class="message-icon">
-  <i class="fa fa-comment-o" aria-hidden="true"></i>
-</div>
-<script>
-    // Add the JavaScript code to handle the modal and form submission
-$(document).ready(function() {
-  // Show the modal when the icon is clicked
-  $(".message-icon").on("click", function() {
-    $("#messageModal").modal("show");
-  });
-
-  // Submit the form when the "Send" button is clicked
-  $("#sendMessage").on("click", function() {
-    // Perform form validation here
-    // ...
-    // Submit the form using AJAX or other method
-    // ...
-    // Close the modal after submission
-    $("#messageModal").modal("hide");
-  });
-});
-// Add the JavaScript code to handle the modal, form submission, and animation
-$(document).ready(function() {
-  // Show the modal when the icon is clicked
-  $(".message-icon").on("click", function() {
-    // Add animation effect
-    $(this).css("transform", "scale(1.1)");
-    setTimeout(function() {
-      $(".message-icon").css("transform", "scale(1)");
-    }, 300);
-    
-    $("#messageModal").modal("show");
-  });
-
-  // Submit the form when the "Send" button is clicked
-  $("#sendMessage").on("click", function() {
-    // Perform form validation here
-    // ...
-    // Submit the form using AJAX or other method
-    // ...
-    // Close the modal after submission
-    $("#messageModal").modal("hide");
-  });
-});
-
-</script>
 
 <?php include 'includes/footer.php'; ?>
