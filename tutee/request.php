@@ -2,13 +2,13 @@
 include ('../connect.php');
 include_once ('includes/header.php');
 
-$scheduleid = $_GET['scheduleId'];
-$tuteeid = $_GET['tuteeId'];
-$tutorid = $_GET['tutorId'];
+$scheduleId = $_GET['scheduleid'];
+$tutorId = $_GET['tutorid'];
+$tuteeId = $_GET['tuteeid'];
 $request_status = 0;
 
 
-$sql = "INSERT INTO tbl_request (scheduleid, tuteeid, tutorid, request_status) VALUES ('$scheduleid', '$tuteeid', '$tutorid', '$request_status')";
+$sql = "INSERT INTO tbl_request (scheduleid, tuteeid, tutorid, request_status) VALUES ('$scheduleId', '$tuteeId', '$tutorId', '$request_status')";
 mysqli_query($database, $sql);
 
 // if successful add a alert message and redirect to tutee\index.php

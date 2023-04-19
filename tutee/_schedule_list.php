@@ -199,7 +199,7 @@ if(isset($_SESSION["username"])){
                             <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                         </div>
                     </li>
-
+a
                     <div class="topbar-divider d-none d-sm-block"></div>
                     <?php
                     // get the name of tutee using adminid
@@ -255,54 +255,43 @@ if(isset($_SESSION["username"])){
                 $tutorid = $_GET['tutorId'];
                 $tuteeid = $_GET['tuteeId'];
 
-                $sql = "SELECT scheduleid, date, start_time, duration, max_tutee, topic, description FROM tbl_schedule WHERE tutorid = '$tutorid'";
+                $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                $result = mysqli_query($database, $sql);
+                $row = mysqli_fetch_assoc($result);
+
+                $fname = $row['tutor_fname'];
+                $mname = $row['tutor_mname'];
+                $lname = $row['tutor_lname'];
+                $fullname = $fname . ' ' . $mname . ' ' . $lname;
+
+
+                // Retrieve schedule data from the database
+                $sql = "SELECT * FROM tbl_schedule WHERE tutorid = '$tutorid'";
                 $result = mysqli_query($database, $sql);
 
-                // Create an array to store events
+                // Create an array to hold the calendar events
                 $events = array();
 
-                // Loop through the result set and add events to the array
-                while ($row = $result->fetch_assoc()) {
-                    // Convert date and time to ISO 8601 format for FullCalendar
-                    $start = $row['date'] . 'T' . $row['start_time'];
-                    $end = date('Y-m-d\TH:i:s', strtotime($start . ' + ' . $row['duration'] . ' minutes'));
-                    $topic = $row['topic'];
-                    $description = $row['description'];
-                    $scheduleid = $row['scheduleid'];
-                    $max_tutee = $row['max_tutee'];
+                // Loop through each row in the result set
+                while ($row = mysqli_fetch_assoc($result)) {
+                    // Format the date and time data for the calendar
+                    $start = $row['date'] . ' ' . $row['start_time'];
+                    $id = $row['scheduleid'];
+                    $duration = $row['duration'];
 
-                    $sql1 = "SELECT COUNT(tuteeid) FROM tbl_request WHERE scheduleid = '$scheduleid' AND request_status = 1";
-                    $result1 = mysqli_query($database, $sql1);
-                    $row1 = mysqli_fetch_assoc($result1);
-
-                    $tuteeid = $row1['COUNT(tuteeid)'];
-                    $tuteeid1 = $_GET['tuteeId'];
-
-                    //check if the tutee has already booked the schedule
-                    $sql2 = "SELECT * FROM tbl_request WHERE scheduleid = '$scheduleid' AND tuteeid = '$tuteeid1'";
-                    $result2 = mysqli_query($database, $sql2);
-                    $row2 = mysqli_fetch_assoc($result2);
-                    //count the number of rows
-                    $count = mysqli_num_rows($result2);
+                    // Create a new event object for the calendar
+                    $event = array(
+                        'id' => $row['scheduleid'],
+                        'title' => $row['topic'],
+                        'description' => $row['description'],
+                        'start' => $start,
+                        'duration' => $duration,
+                        'max_tutee' => $row['max_tutee']
+                    );
 
                     // Add the event to the array
-                    $events[] = array(
-                        'title' => $row['topic'],
-                        'start' => $start,
-                        'scheduleid' => $scheduleid,
-                        'date' => $row['date'],
-                        'topic' => $topic,
-                        'description' => $description,
-                        'start' => $start,
-                        'end' => $end,
-                        'duration' => $row['duration'],
-                        'max_tutee' => $max_tutee,
-                        'tuteeid' => $tuteeid,
-                        'check' => $count
-                    );
+                    $events[] = $event;
                 }
-                // Retrieve schedule data from the database
-
 
 
                 ?>
@@ -310,95 +299,18 @@ if(isset($_SESSION["username"])){
 
 
                 <!-- Page Heading -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">'s Schedule</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="card shadow">
-                                            <div class="card-body">
-                                                <div id="calendar"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card shadow mb-4" id="scheduledetails">
-                                            <div class="card-header py-3">
-                                                <h6 class="m-0 font-weight-bold text-primary">Schedule Details</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="scheduleid">Schedule ID:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="scheduleid"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="date">Date:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="date"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="start">Time:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="start"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="duration">Duration:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="duration"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="topic">Topic: </label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="topic"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="description">Description: </label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="description"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="maxtutee">Max Tutee:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="maxtutee"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label for="availabilty">Available:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <span class="badge badge-success" id="availabilty"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-12">
-                                                        <button class="btn btn-primary" id="btn-status" data-tutorid="<?php echo $tutorid = $_GET['tutorId'];?>" data-tuteeid="<?php echo $tuteeid = $_GET['tuteeId'];?>" data-scheduleid="#scheduleid"></button>
-                                                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"><?php echo $fullname?>'s Schedule</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div id="calendar"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -406,129 +318,113 @@ if(isset($_SESSION["username"])){
                                 </div>
                             </div>
                         </div>
+                        <!-- Define the Bootstrap modal -->
+                        <div class="modal fade" id="event-modal" tabindex="-1" aria-labelledby="event-modal-label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="event-modal-label">Event Details</h5>
+                                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Event details will be inserted here -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- /.container-fluid -->
+
                     </div>
+                    <!-- End of Main Content -->
 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
-
-                    <script>
-                        $('#calendar').fullCalendar({
-                            header: {
-                                left: 'today',
-                                center: 'title',
-                                right: 'prev, next'
-                            },
-                            navLinks: true,
-                            eventLimit: true,
+                <script>
+                    jQuery.noConflict();
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
                             events: <?php echo json_encode($events); ?>,
-                            eventClick: function (event) {
-                                // Update the card with the event details
-                                $('#scheduleid').text(event.scheduleid);
-                                $('#start').text(event.start);
-                                $('#date').text(event.date);
-                                $('#duration').text(event.duration);
-                                $('#topic').text(event.topic);
-                                $('#description').text(event.description);
-                                $('#maxtutee').text(event.max_tutee);
-                                $('#slot').text(event.tuteeid + '/' + event.max_tutee + ' slots')
-                                var btn = $('#btn-status');
-                                console.log(event.check);
+                            eventClick: function(info) {
+                                // Get the event details
+                                var event = info.event;
+                                var topic = event.title;
+                                var description = event.extendedProps.description;
+                                var start = event.start.toLocaleString();
+                                var duration = event.extendedProps.duration;
+                                var id = event.id;
 
-                                // Check if the user has booked the slot or not
-                                if (event.check == 0) {
-                                    $('#btn-status').text('Available');
-                                    $('#btn-status').removeClass('btn-danger');
-                                    $('#btn-status').addClass('btn-primary');
-                                    // enable the button
-                                    $('#btn-status').prop('disabled', false);
-                                }
-                                else {
-                                    $('#btn-status').text('Already Booked');
-                                    $('#btn-status').removeClass('btn-primary');
-                                    $('#btn-status').addClass('btn-danger');
-                                    // disable the button
-                                    $('#btn-status').prop('disabled', true);
-                                }
-                                if (event.tuteeid == event.max_tutee){
-                                    $('#availabilty').text('Full');
-                                    $('#availabilty').removeClass('badge-success');
-                                    $('#availabilty').addClass('badge-danger');
-                                    $('#btn-status').text('Full');
-                                    $('#btn-status').removeClass('btn-primary');
-                                    $('#btn-status').addClass('btn-danger');
-                                    // disable the button
-                                    $('#btn-status').prop('disabled', true);
-                                } else {
-                                    $('#availabilty').text('Available');
-                                    $('#availabilty').removeClass('badge-danger');
-                                    $('#availabilty').addClass('badge-success');
-                                }
+                                // Set the content of the modal
+                                var modalBody = document.querySelector('.modal-body');
+                                modalBody.innerHTML = '<p><strong>Topic:</strong> ' + topic + '</p>' +
+                                    '<p><strong>Description:</strong> ' + description + '</p>' +
+                                    '<p><strong>Start Time:</strong> ' + start + '</p>' +
+                                    '<p><strong>Duration:</strong> ' + duration + ' hour(s)</p>';
 
+                                // add button to modal footer
+                                var modalFooter = document.querySelector('.modal-footer');
+                                modalFooter.innerHTML = '<a href="request.php?tutorId=<?php echo $tutorid?>&tuteeId=<?php echo $tuteeid?>&scheduleId=' + id + '" class="btn btn-primary">Book</a>';
+                                modalFooter.innertHTML = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'
 
+                                // Show the modal
+                                var modal = new bootstrap.Modal(document.getElementById('event-modal'));
+                                modal.show();
                             }
                         });
-                        // if button clicked then book the slot use get method to pass the scheduleid, tuteeid and tuteeid
-                        $('#btn-status').on('click', function() {
-                            // Get the tutorid, tuteeid and scheduleid from the button
-                            var scheduleId = $('#scheduleid').text();
-                            var tutorId = $('#btn-status').data('tutorid');
-                            var tuteeId = $('#btn-status').data('tuteeid');
-                            // Redirect to the schedule page
-                            window.location.href = "request.php?scheduleid=" + scheduleId + "&tutorid=" + tutorId + "&tuteeid=" + tuteeId;
-                        });
-                    </script>
-
-
-                    <!-- /.container-fluid -->
-
+                        calendar.render();
+                    });
+                </script>
                 </div>
-                <!-- End of Main Content -->
 
+
+
+
+                <!-- /.container-fluid -->
 
             </div>
-            <!-- /.container-fluid -->
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Nexus Link 2023</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
 
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2023</span>
-                </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Page Wrapper -->
 
-</div>
-<!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="../login.php">Logout</a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<?php include 'includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>

@@ -320,6 +320,7 @@ text-decoration:none;
                         $result = mysqli_query($database, $sql);
 
                         while($row = mysqli_fetch_assoc($result)) {
+                            $tutorid = $row['tutorid'];
                             $tutor_fname = $row['tutor_fname'];
                             $tutor_mname = $row['tutor_mname'];
                             $tutor_lname = $row['tutor_lname'];
@@ -331,8 +332,10 @@ text-decoration:none;
                             <div class="col-lg-3 col-md-6 col-12 mt-2 pt-8">
                                 <div class="card border-0 bg-light rounded shadow">
                                     <div class="card-body p-4">
+                                    <div class="row>">
                                     <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">Full time</span>
-                                        <span class="badge rounded-pill bg-danger float-md-end mb-3 mb-sm-0">Part time</span>
+                                        <span class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">Part time</span>
+                                    </div>
                                     <img src="../img/user.png" class="card-img-top rounded-circle" alt="Profile Picture" style="height: 80px; width: 80px;">
                                         <h5>' . $fullname . '</h5>
                                         <div class="mt-3">
@@ -343,7 +346,7 @@ text-decoration:none;
                                     <?php echo $bio; ?>
                                     </div>
                                     <div class="mt-3">
-                                    <button href="#" class="btn btn-primary view-details" data-toggle="modal" data-target="#tutorModal" data-tutor-name="' . $fullname . '" data-tutor-email="' . $tutor_email . '" data-tutor-course="' . $tutor_course . '" data-tutor-bio="' . $tutor_bio . '">View Details</button>
+                                    <button class="btn btn-primary view-details" data-toggle="modal" data-target="#tutorModal" data-tutor-name="' . $fullname . '" data-tutor-email="' . $tutor_email . '" data-tutor-course="' . $tutor_course . '" data-tutor-bio="' . $tutor_bio . '" data-tutorid="'. $tutorid .'">View Details</button>
                                     </div>
                                     </div>
                                     </div>
@@ -488,40 +491,55 @@ text-decoration:none;
       </div>
       <div class="modal-body">
         <!-- Tutor information will be displayed here -->
-        <h5 id="tutorName"></h5>
-        <p id="tutorEmail"></p>
-        <p id="tutorCourse"></p>
-        <p id="tutorBio"></p>
+          <div class="row">
+              <div class="col-4">
+                  <img src="../img/user.png" alt="Tutor Image" class="img-fluid rounded-circle col-12" id="tutorImage">
+              </div>
+              <div class="col-8">
+                    <h5 id="tutorName"></h5>
+                    <p id="tutorEmail"></p>
+                    <p id="tutorCourse"></p>
+                    <p id="tutorBio"></p>
+              </div>
+          </div>
+          <input type="hidden" id="tutorId">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="viewScheduleBtn">View Schedule</button>
+        <button type="button" class="btn btn-primary" id="viewScheduleBtn" data-tutorid="tutorId" data-tuteeid="<?php echo $tuteeid ?>">View Schedule</button>
       </div>
     </div>
   </div>
 </div>
 <script>
     // JavaScript code to handle the modal
-$(document).ready(function() {
-  // Event listener for the "View Details" button
-  $('.view-details').on('click', function() {
-    // Get the tutor information from the data attributes
-    var tutorName = $(this).data('tutor-name');
-    var tutorEmail = $(this).data('tutor-email');
-    var tutorCourse = $(this).data('tutor-course');
-    var tutorBio = $(this).data('tutor-bio');
-    
-    // Set the tutor information in the modal
-    $('#tutorName').text(tutorName);
-    $('#tutorEmail').text('Email: ' + tutorEmail);
-    $('#tutorCourse').text('Course: ' + tutorCourse);
-    $('#tutorBio').text('Bio: ' + tutorBio);
-  });
+    $(document).ready(function() {
+      // Event listener for the "View Details" button
+      $('.view-details').on('click', function() {
+        // Get the tutor information from the data attributes
+        var tutorName = $(this).data('tutor-name');
+        var tutorEmail = $(this).data('tutor-email');
+        var tutorCourse = $(this).data('tutor-course');
+        var tutorBio = $(this).data('tutor-bio');
+        var tutorId = $(this).data('tutorid');
 
-  // Event listener for the "View Schedule" button
-  $('#viewScheduleBtn').on('click', function() {
-    // Add your logic for handling the "View Schedule" button click here
-    // This will be executed when the "View Schedule" button inside the modal is clicked
+        // Set the tutor information in the modal
+        $('#tutorName').text('Fullname: ' + tutorName);
+        $('#tutorEmail').text('Email: ' + tutorEmail);
+        $('#tutorCourse').text('Course: ' + tutorCourse);
+        $('#tutorBio').text('Bio: ' + tutorBio);
+
+        // pass tutorid to view schedule button in modal
+        $('#viewScheduleBtn').data('tutorid', tutorId);
+      });
+
+      // Event listener for the "View Schedule" button
+      $('#viewScheduleBtn').on('click', function() {
+        // Get the tutor ID from modal;
+        var tutorId = $(this).data('tutorid');
+        // Redirect to the schedule page
+        window.location.href = 'schedule_list.php?tutorId=' + tutorId + '&tuteeId=' + <?php echo $tutorid ?>;
+
   });
 });
 </script>

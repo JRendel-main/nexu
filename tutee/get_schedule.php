@@ -9,7 +9,7 @@ if ($mysqli->connect_errno) {
 }
 
 // Retrieve data from the tbl_schedule table
-$result = $mysqli->query("SELECT scheduleid, topic, description, start_time, end_time, date, max_tutee FROM tbl_schedule");
+$result = $mysqli->query("SELECT scheduleid, topic, description, start_time, duration, date, max_tutee FROM tbl_schedule");
 
 // Format the data as JSON for the calendar
 $data = array();
@@ -18,7 +18,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['topic'],
         'description' => $row['description'],
         'start' => $row['date'] . 'T' . $row['start_time'],
-        'end' => $row['date'] . 'T' . $row['end_time'],
+        'duration' => $row['duration'],
         'max_tutee' => $row['max_tutee']
     );
     $data[] = $event;
