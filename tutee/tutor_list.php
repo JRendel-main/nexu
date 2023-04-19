@@ -313,6 +313,7 @@ text-decoration:none;
                             </div>
                         </div>
                     <?php endif; ?>
+                        <div class="row">
                     <?php
                         //get the list of tutor from tbl_tutor where their auth_status is 1 from tbl_auth using auth_id
                         $sql = "SELECT * FROM tbl_tutor INNER JOIN tbl_auth ON tbl_tutor.auth_id = tbl_auth.auth_id WHERE tbl_auth.acc_status = 1";
@@ -324,38 +325,32 @@ text-decoration:none;
                             $tutor_lname = $row['tutor_lname'];
                             $tutor_bio = $row['tutor_bio'];
                             $tutor_email = $row['tutor_email'];
+                            $tutor_course = $row['tutor_course'];
                             $fullname = $tutor_fname . ' ' . $tutor_mname . ' ' . $tutor_lname;
                             echo '
-                            <div class="row">
                             <div class="col-lg-3 col-md-6 col-12 mt-2 pt-8">
                                 <div class="card border-0 bg-light rounded shadow">
                                     <div class="card-body p-4">
-                                    <img src="../img/undraw_profile_1.svg" class="card-img-top rounded-circle" alt="Profile Picture" style="height: 80px; width: 80px;">
-                                        <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">Full time</span>
+                                    <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">Full time</span>
                                         <span class="badge rounded-pill bg-danger float-md-end mb-3 mb-sm-0">Part time</span>
+                                    <img src="../img/user.png" class="card-img-top rounded-circle" alt="Profile Picture" style="height: 80px; width: 80px;">
                                         <h5>' . $fullname . '</h5>
                                         <div class="mt-3">
-                                            <span class="text-muted d-block"><i class="fa fa-email" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">Bootdey.com LLC.</a></span>
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> USA</span>
-                                        </div>
-                                        <div class="mt-3">
-                                            <?php echo $bio; ?>
-                                        </div>
-                                        <div class="mt-3">
-                                            <button href="#" class="btn btn-primary">View Details</button>
-                                        </div>
+                                            <span class="text-muted d-block"><i class="fa fa-envelope" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">' .$tutor_email . '</a></span>
+                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i>'.  $tutor_course . '</span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                            
-                            ';
-                        }
-
-
-
+                                    <div class="mt-3">
+                                    <?php echo $bio; ?>
+                                    </div>
+                                    <div class="mt-3">
+                                    <button href="#" class="btn btn-primary view-details" data-toggle="modal" data-target="#tutorModal" data-tutor-name="' . $fullname . '" data-tutor-email="' . $tutor_email . '" data-tutor-course="' . $tutor_course . '" data-tutor-bio="' . $tutor_bio . '">View Details</button>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>';
+                                    }      
                         ?>
-
+                </div>
             </div>
         </div>
         <!-- End of Main Content -->
@@ -482,6 +477,55 @@ text-decoration:none;
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="tutorModal" tabindex="-1" aria-labelledby="tutorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorModalLabel">Tutor Details</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Tutor information will be displayed here -->
+        <h5 id="tutorName"></h5>
+        <p id="tutorEmail"></p>
+        <p id="tutorCourse"></p>
+        <p id="tutorBio"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="viewScheduleBtn">View Schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    // JavaScript code to handle the modal
+$(document).ready(function() {
+  // Event listener for the "View Details" button
+  $('.view-details').on('click', function() {
+    // Get the tutor information from the data attributes
+    var tutorName = $(this).data('tutor-name');
+    var tutorEmail = $(this).data('tutor-email');
+    var tutorCourse = $(this).data('tutor-course');
+    var tutorBio = $(this).data('tutor-bio');
+    
+    // Set the tutor information in the modal
+    $('#tutorName').text(tutorName);
+    $('#tutorEmail').text('Email: ' + tutorEmail);
+    $('#tutorCourse').text('Course: ' + tutorCourse);
+    $('#tutorBio').text('Bio: ' + tutorBio);
+  });
+
+  // Event listener for the "View Schedule" button
+  $('#viewScheduleBtn').on('click', function() {
+    // Add your logic for handling the "View Schedule" button click here
+    // This will be executed when the "View Schedule" button inside the modal is clicked
+  });
+});
+</script>
+
 
 
 
