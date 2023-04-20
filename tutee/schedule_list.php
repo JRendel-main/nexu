@@ -398,6 +398,7 @@ if(isset($_SESSION["username"])){
                                                 <div class="row align-items-center">
                                                     <div class="col-md-12">
                                                         <button class="btn btn-primary" id="btn-status" data-tutorid="<?php echo $tutorid = $_GET['tutorId'];?>" data-tuteeid="<?php echo $tuteeid = $_GET['tuteeId'];?>" data-scheduleid="#scheduleid"></button>
+                                                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -412,6 +413,7 @@ if(isset($_SESSION["username"])){
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
 
                     <script>
+                        cancelBtn.style.display = 'none';
                         $('#calendar').fullCalendar({
                             header: {
                                 left: 'today',
@@ -441,13 +443,17 @@ if(isset($_SESSION["username"])){
                                     $('#btn-status').addClass('btn-primary');
                                     // enable the button
                                     $('#btn-status').prop('disabled', false);
+                                    cancelBtn.style.display = 'none';
                                 }
                                 else {
-                                    $('#btn-status').text('Already Booked');
+                                    $('#btn-status').text('Wait for verification...');
                                     $('#btn-status').removeClass('btn-primary');
                                     $('#btn-status').addClass('btn-danger');
                                     // disable the button
                                     $('#btn-status').prop('disabled', true);
+                                    // add cancel appointment button
+                                    cancelBtn.style.display = 'inline-block';
+
                                 }
                                 if (event.tuteeid == event.max_tutee){
                                     $('#availabilty').text('Full');

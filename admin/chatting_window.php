@@ -129,10 +129,10 @@ if(isset($_SESSION["username"])){
                         </div>
                         <?php
                         // Retrieve messages from database
-                        $sql = "SELECT messageid, date, id, catid FROM tbl_message WHERE mess_status = 0 ORDER BY messageid DESC";
+                        $sql = "SELECT messageid, date, id, catid, message FROM tbl_message WHERE mess_status = 0 ORDER BY messageid DESC";
                         $result = mysqli_query($database, $sql);
 
-                        // Count number of unread messages
+                        // // Count number of unread messages
                         $messcount = mysqli_num_rows($result);
                         ?>
                     <li class="nav-item dropdown no-arrow mx-1">
@@ -235,6 +235,41 @@ if(isset($_SESSION["username"])){
                                             // Retrieve messages from database
                                             $sql = "SELECT messageid, date, id, catid, mess_status FROM tbl_message WHERE mess_status = 0 ORDER BY messageid DESC";
                                             $result = mysqli_query($database, $sql);
+                                            function formatDate($date) {
+                                                // Convert date to timestamp
+                                                $timestamp = strtotime($date);
+                                                // Get current timestamp
+                                                $now = time();
+                                                // Calculate time difference in seconds
+                                                $diff = $now - $timestamp;
+
+                                                // Define time intervals in seconds
+                                                $minute = 60;
+                                                $hour = $minute * 60;
+                                                $day = $hour * 24;
+                                                $month = $day * 30;
+                                                $year = $day * 365;
+
+                                                // Determine appropriate time format
+                                                if ($diff < $minute) {
+                                                    return 'Just now';
+                                                } elseif ($diff < $hour) {
+                                                    $time = floor($diff / $minute);
+                                                    return $time . ' minute' . ($time > 1 ? 's' : '') . ' ago';
+                                                } elseif ($diff < $day) {
+                                                    $time = floor($diff / $hour);
+                                                    return $time . ' hour' . ($time > 1 ? 's' : '') . ' ago';
+                                                } elseif ($diff < $month) {
+                                                    $time = floor($diff / $day);
+                                                    return $time . ' day' . ($time > 1 ? 's' : '') . ' ago';
+                                                } elseif ($diff < $year) {
+                                                    $time = floor($diff / $month);
+                                                    return $time . ' month' . ($time > 1 ? 's' : '') . ' ago';
+                                                } else {
+                                                    $time = floor($diff / $year);
+                                                    return $time . ' year' . ($time > 1 ? 's' : '') . ' ago';
+                                                }
+                                            }
                                             while ($row = mysqli_fetch_assoc($result)) {
                                                 $messageid = $row['messageid'];
                                                 $date = $row['date'];
@@ -242,45 +277,6 @@ if(isset($_SESSION["username"])){
                                                 $catid = $row['catid'];
                                                 $mess_status = $row['mess_status'];
                                                 // Function to format message date
-                                                function formatDate($date) {
-                                                    // Convert date to timestamp
-                                                    $timestamp = strtotime($date);
-                                                    // Get current timestamp
-                                                    $now = time();
-                                                    // Calculate time difference in seconds
-                                                    $diff = $now - $timestamp;
-
-                                                    // Define time intervals in seconds
-                                                    $minute = 60;
-                                                    $hour = $minute * 60;
-                                                    $day = $hour * 24;
-                                                    $month = $day * 30;
-                                                    $year = $day * 365;
-
-                                                    // Determine appropriate time format
-                                                    if ($diff < $minute) {
-                                                        return 'Just now';
-                                                    } elseif ($diff < $hour) {
-                                                        $time = floor($diff / $minute);
-                                                        return $time . ' minute' . ($time > 1 ? 's' : '') . ' ago';
-                                                    } elseif ($diff < $day) {
-                                                        $time = floor($diff / $hour);
-                                                        return $time . ' hour' . ($time > 1 ? 's' : '') . ' ago';
-                                                    } elseif ($diff < $month) {
-                                                        $time = floor($diff / $day);
-                                                        return $time . ' day' . ($time > 1 ? 's' : '') . ' ago';
-                                                    } elseif ($diff < $year) {
-                                                        $time = floor($diff / $month);
-                                                        return $time . ' month' . ($time > 1 ? 's' : '') . ' ago';
-                                                    } else {
-                                                        $time = floor($diff / $year);
-                                                        return $time . ' year' . ($time > 1 ? 's' : '') . ' ago';
-                                                    }
-                                                }
-
-
-
-
                                                 // get the name of the user
                                                 $sql2 = "SELECT * FROM tbl_tutor WHERE tutorid = '$id'";
                                                 $result2 = mysqli_query($database, $sql2);
@@ -309,28 +305,63 @@ if(isset($_SESSION["username"])){
                                                             <?php if ($mess_status == 0) { ?>
                                                                 <span class="badge badge-danger">Unread</span>
                                                             <?php } ?>
-                                                            <a href="chatting_window.php?messageid=<?php echo $messageid; ?>" class="btn btn-primary">View</a>
+                                                            <a href="chatting_window.php?messageid=<?php echo $messageid; ?>" class="btn btn-success">View</a>
                                                         </div>
                                                     </div>
                                                     <hr>
                                                 </div>
 
                                                 <?php
+                                                
                                             }
                                             ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <div clas="card shadow">
+                                    <div class="col-md-8">
+                                        <div class="card shadow">
+                                            <div class="card-body" id="chat-window">
+                                                <!-- Chat messages will be displayed here -->
 
+                                                <!-- Example of a received message -->
+                                                <div class="received-message">
+                                                    <strong>John Doe</strong>
+                                                    <p>Hello! How are you?</p>
+                                                    <small>10:30 AM, April 20, 2023</small>
+                                                </div>
+
+                                                <!-- Example of a sent message -->
+                                                <div class="sent-message">
+                                                    <p>Hi John! I'm doing well, thank you. How about you?</p>
+                                                    <small>10:32 AM, April 20, 2023</small>
+                                                </div>
+
+                                            </div>
+                                            <div class="card-footer">
+                                                <!-- Input field for typing and sending messages -->
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Type your message..." id="chat-input">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary" type="button" id="send-button">Send</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <script>
+                // get the id from get method and extract information from database
+                var messageid = <?php echo $_GET['messageid']; ?>;
+                var userid = <?php echo $_SESSION['tutorid']; ?>;
+
+                // change the chatting window to data where from database use one file only
+
+            </script>
 
             </div>
 
