@@ -45,6 +45,9 @@
         <a class="nav-link" href="edit_duration.php">
             <i class="fa-sharp fa-solid fa-pen-to-square"></i>
             <span> Edit Duration</span></a>
+            <a class="nav-link" href="chatting_window.php">
+            <i class="fa-sharp fa-solid fa-envelope"></i>
+            <span> Inbox</span></a>
     </li>
     </li>
     <!-- Divider -->

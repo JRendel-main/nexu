@@ -233,7 +233,7 @@ if(isset($_SESSION["username"])){
                                         <!--List all the message here-->
                                             <?php
                                             // Retrieve messages from database
-                                            $sql = "SELECT messageid, date, id, catid, mess_status FROM tbl_message WHERE mess_status = 0 ORDER BY messageid DESC";
+                                            $sql = "SELECT messageid, date, id, catid, mess_status, message FROM tbl_message WHERE mess_status = 0 AND recipient_id = '$adminid' AND recipient_catid = 0 ORDER BY messageid DESC";
                                             $result = mysqli_query($database, $sql);
                                             function formatDate($date) {
                                                 // Convert date to timestamp
@@ -276,21 +276,32 @@ if(isset($_SESSION["username"])){
                                                 $id = $row['id'];
                                                 $catid = $row['catid'];
                                                 $mess_status = $row['mess_status'];
+                                                $message = $row['message'];
                                                 // Function to format message date
                                                 // get the name of the user
-                                                $sql2 = "SELECT * FROM tbl_tutor WHERE tutorid = '$id'";
-                                                $result2 = mysqli_query($database, $sql2);
-                                                $row2 = mysqli_fetch_assoc($result2);
-                                                $tutor_fname = $row2['tutor_fname'];
-                                                $tutor_lname = $row2['tutor_lname'];
-                                                $name = $tutor_fname . " " . $tutor_lname;
                                                 // get the name of the category;
                                                 if ($catid == 1) {
                                                     $catname = "Tutor";
+                                                    $sql2 = "SELECT * FROM tbl_tutor WHERE tutorid = '$id'";
+                                                    $result2 = mysqli_query($database, $sql2);
+                                                    $row2 = mysqli_fetch_assoc($result2);
+                                                    $tutor_fname = $row2['tutor_fname'];
+                                                    $tutor_lname = $row2['tutor_lname'];
+                                                    $name = $tutor_fname . " " . $tutor_lname;
                                                 } else if ($catid == 2) {
-                                                    $catname = "Student";
+                                                    $catname = "Tutee";
+                                                    $sql2 = "SELECT * FROM tbl_tutee WHERE tuteeid = '$id'";
+                                                    $result2 = mysqli_query($database, $sql2);
+                                                    $row2 = mysqli_fetch_assoc($result2);
+                                                    $tutee_fname = $row2['tutee_fname'];
+                                                    $tutee_lname = $row2['tutee_lname'];
+                                                    $name = $tutee_fname . " " . $tutee_lname;
                                                 } else if ($catid == 3) {
                                                     $catname = "Admin";
+                                                    $sql2 = "SELECT * FROM tbl_admin WHERE adminid = '$id'";
+                                                    $result2 = mysqli_query($database, $sql2);
+                                                    $row2 = mysqli_fetch_assoc($result2);
+                                                    $name = $row2['admin_name'];
                                                 }
                                                 ?>
                                                 <div class="card-body">
@@ -304,8 +315,9 @@ if(isset($_SESSION["username"])){
                                                             <p><?php echo formatDate($date); ?></p>
                                                             <?php if ($mess_status == 0) { ?>
                                                                 <span class="badge badge-danger">Unread</span>
-                                                            <?php } ?>
-                                                            <a href="chatting_window.php?messageid=<?php echo $messageid; ?>" class="btn btn-success">View</a>
+                                                            <?php } else { echo '<span class="badge badge-success">Read</span>';} ?>
+                                                            <button class="btn btn-success" id="view" data-messid="<?php echo $messageid?>" data-id="<?php echo $adminid ?>" data-name="<?php echo $name ?>" data-time="<?php echo $date; ?>" data-message="<?php echo $message ?>"
+                                                            >View</button>
                                                         </div>
                                                     </div>
                                                     <hr>
@@ -314,6 +326,8 @@ if(isset($_SESSION["username"])){
                                                 <?php
                                                 
                                             }
+                                            //get the datetime now
+                                            $now = date("Y-m-d H:i:s");
                                             ?>
                                         </div>
                                     </div>
@@ -321,27 +335,45 @@ if(isset($_SESSION["username"])){
                                         <div class="card shadow">
                                             <div class="card-body" id="chat-window">
                                                 <!-- Chat messages will be displayed here -->
-
-                                                <!-- Example of a received message -->
-                                                <div class="received-message">
-                                                    <strong>John Doe</strong>
-                                                    <p>Hello! How are you?</p>
-                                                    <small>10:30 AM, April 20, 2023</small>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-2">
+                                                                        <img src="../img/undraw_profile.svg" class="img-fluid">
+                                                                    </div>
+                                                                    <div class="col-md-10">
+                                                                        <p id="messid">ID</p>
+                                                                        <h5 id="name">Fullname</h5>
+                                                                        <p id="message">Message</p>
+                                                                        <small id="time">Time</small>
+                                                                        <input type="hidden" id="id" value="<?php echo $adminid ?>">
+                                                                        <input type="hidden" id="catid" value="0">
+                                                                        <input type="hidden" id="recipient_id" value="<?php echo $id?>">
+                                                                        <input type="hidden" id="recipient_catid" value="<?php echo $catid ?>">
+                                                                        <input type="hidden" id="mess_status" value="<?php echo $mess_status ?>">
+                                                                        <input type="hidden" id="now" value="<?php echo $now ?>">
+                                                                    </div>
+                                                                </div>
+                                                                <hr>
+                                                            </div>
+                                                            <div class="card-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="input-group">
+                                                                            <input type="text" class="form-control" id="reply" placeholder="Type your message here...">
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-primary" type="button" id="sendReply">Send</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-
-                                                <!-- Example of a sent message -->
-                                                <div class="sent-message">
-                                                    <p>Hi John! I'm doing well, thank you. How about you?</p>
-                                                    <small>10:32 AM, April 20, 2023</small>
                                                 </div>
-
-                                            </div>
-                                            <div class="card-footer">
-                                                <!-- Input field for typing and sending messages -->
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Type your message..." id="chat-input">
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-primary" type="button" id="send-button">Send</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -350,16 +382,67 @@ if(isset($_SESSION["username"])){
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            
             <script>
-                // get the id from get method and extract information from database
-                var messageid = <?php echo $_GET['messageid']; ?>;
-                var userid = <?php echo $_SESSION['tutorid']; ?>;
+                   // detect if view is clicked
+                     $(document).on('click', '#view', function () {
+                          // get the id of the message
+                          var messageid = $(this).attr('data-messid');
+                          var id = $(this).attr('data-id');
+                          // get the name of the user
+                          var name = $(this).attr('data-name');
+                          // get the category of the user
+                          var catname = $(this).attr('data-catname');
+                          // get the message
+                          var message = $(this).attr('data-message');
+                            // get the time
+                            var time = $(this).attr('data-time');
+                          // get the status
+                          var status = $(this).attr('data-status');
+                          // send variables to send button
+        
+                         $('#messid').html(messageid);
+                          $('#name').html(name);
+                          $('#message').html(message);
+                          $('#time').html(time);
+                          $('#status').html(status);
+                          // set the message id
+                          $('#id').val(messageid);
+                          // set the status to read
+                           // detect if sendReply button clicked get the catid and id of user and recipient_catid, recipient_id
+                    });  
+                    $(document).on('click', '#sendReply', function () {
+                        var messageid = $('#messid').val();
+                        var message = $('#message').val();
+                        var time = $('#date').val();
+                        var status = $('#status').val();
+                        var catid = $('#catid').val();
+                        var id = $('#id').val();
+                        console.log(id);
+                        var recipient_catid = $('#recipient_catid').val();
+                        var recipient_id = $('#recipient_id').val();
+                        var mess_status = $('#mess_status').val();
+                        var now = $('#now').val();
 
-                // change the chatting window to data where from database use one file only
+                        $.ajax({
+                            url: 'sendReply.php',
+                            method: 'POST',
+                            data: {
+                                messageid: messageid,
+                                message: message,
+                                time: time,
+                                status: status,
+                                catid: catid,
+                                id: id,
+                                recipient_catid: recipient_catid,
+                                recipient_id: recipient_id,
+                                mess_status: mess_status,
+                                now: now
+                            },
+                            success: function (data) {
+                                $('#chat-window').html(data);
+                            }
+                        });
+                    });  
 
             </script>
 

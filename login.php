@@ -77,7 +77,7 @@ if($_POST){
                 }
             }
             else {
-                $errors[] = "Account is not active, Contact the Administrtor";
+                $errors[] = "Account is not active, Wait for confirmation from admin!";
             }
         }
         else {
@@ -135,6 +135,25 @@ if($_POST){
                         <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
                         <div class="col-lg-6">
                             <div class="p-5">
+                            <?php
+                                    // display the error
+                                    if(!empty($errors)) {
+                                        echo "<div class='error-messages'> ";
+                                        foreach ($errors as $error) {
+                                            echo "<div class='alert alert-danger' role='alert'>";
+                                            echo $error;
+                                            echo "</div>";
+                                            // remove the alert after 3 second
+                                            echo "<script>
+                                            setTimeout(function(){
+                                                $('.alert').alert('close');
+                                            }, 3000);
+                                            </script>";
+                                        }
+                                        echo "</div>";
+                                    }
+
+                                    ?>
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                 </div>
@@ -156,17 +175,6 @@ if($_POST){
                                         </div>
                                     </div>
                                     <button class="btn btn-primary btn-user btn-block" type="submit">Login</button>
-                                    <?php
-                                    // display the error
-                                    if(!empty($errors)) {
-                                        echo "<div class='error-messages'> ";
-                                        foreach ($errors as $error) {
-                                            echo "<p><strong>$error</strong></p>";
-                                        }
-                                        echo "</div>";
-                                    }
-
-                                    ?>
                                     <hr>
                                 </form>
                                 <hr>

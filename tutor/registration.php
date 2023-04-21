@@ -24,6 +24,37 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $acc_status = "0";
     $catid = "2";
 
+    $targetDirectory = "../img/cor/"; // specify the directory where you want to save the uploaded file
+    $uploadedFile = $_FILES["tutor_cor"]["name"]; // get the uploaded file name
+    $targetFile = $targetDirectory . basename($uploadedFile);
+
+    // Check if file already exists
+    if (file_exists($targetFile)) {
+        $info = pathinfo($uploadedFile);
+        $extension = isset($info['extension']) ? '.' . $info['extension'] : '';
+        $filenameOnly = $info['filename'];
+
+        // Append a number to the filename until a unique filename is found
+        $counter = 1;
+        while (file_exists($targetFile)) {
+            $newFilename = $filenameOnly . '(' . $counter . ')' . $extension;
+            $targetFile = $targetDirectory . $newFilename;
+            $counter++;
+        }
+
+        echo "File with the same name already exists. Renaming to: $newFilename";
+    }
+
+    if (move_uploaded_file($_FILES["tutor_cor"]["tmp_name"], $targetFile)) {
+        echo "File uploaded successfully.";
+        $tutor_cor_filename = $targetFile;
+    }
+    else {
+        $error[] = "Error uploading files!";
+    }
+
+
+
     // validation if username aleady exists in the database
     include('../connect.php');
     $query = "SELECT username from tbl_auth where username = '$username'";
@@ -41,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
     if (empty($errors)) {
         // put data into tbl_tutor and tbl_auth
-        $sql = "INSERT INTO tbl_tutor (tutor_fname, tutor_mname, tutor_lname, tutor_sex, tutor_email, tutor_course, tutor_year, tutor_bday) values ('$tutor_fname', '$tutor_mname', '$tutor_lname', '$tutor_sex', '$tutor_email', '$tutor_course', '$tutor_year', '$tutor_bday')";
+        $sql = "INSERT INTO tbl_tutor (tutor_fname, tutor_mname, tutor_lname, tutor_sex, tutor_email, tutor_cor, tutor_course, tutor_year, tutor_bday) values ('$tutor_fname', '$tutor_mname', '$tutor_lname', '$tutor_sex', '$tutor_email', '$tutor_cor_filename', '$tutor_course', '$tutor_year', '$tutor_bday')";
         $sql2 = "INSERT INTO tbl_auth (username, password, acc_status, catid) values ('$username', '$conf_password', '$acc_status', '$catid')";
         $result = mysqli_query($database, $sql);
         $result2 = mysqli_query($database, $sql2);
@@ -95,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Create an Account as Tutor</h1>
                         </div>
-                        <form class="user" method="POST">
+                        <form class="user" method="POST" enctype="multipart/form-data">
                             <label for="exampleFirstName">
                                 <h6 class="m-0 font-weight-bold text-primary text-align-center">Full Name</h6>
                             </label>
@@ -112,10 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                                     <input type="text" class="form-control " id="exampleLastName"
                                            placeholder="Last Name" name="tutor_lname">
                                 </div>
-                            </div>
-                            <div class="hr-text">
-                                <hr>
-                                <span class="hr-text">OR</span>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-4 mb-3 mb-sm-0">
@@ -148,6 +175,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                             <div class="form-group">
                                 <input type="email" class="form-control" id="exampleInputEmail"
                                        placeholder="Email Address" name="tutor_email">
+                            </div>
+                            <div class="form-group">
+                                <label for="tutee_cor"><h6 class="m-0 font-weight-bold text-primary">Upload your <strong>Certificate of Registration</strong></h6></strong></label>
+                                <input type="file" class="form-control" id="exampleInputFile" name="tutor_cor">
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">

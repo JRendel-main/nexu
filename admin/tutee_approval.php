@@ -310,6 +310,7 @@ if(isset($_SESSION["username"])){
                                     $tutee_email = $row['tutee_email'];
                                     $tutee_course = $row['tutee_course'];
                                     $tutee_year = $row['tutee_year'];
+                                    $tutee_cor = $row['tutee_cor'];
 
                                     echo "<tr>";
                                     echo "<td>$tutee_stunum</td>";
@@ -317,8 +318,15 @@ if(isset($_SESSION["username"])){
                                     echo "<td>$tutee_email</td>";
                                     echo "<td>$tutee_course</td>";
                                     echo "<td>$tutee_year</td>";
-                                    echo "<td><a href='approve.php?auth_id={$row['auth_id']}' class='btn btn-success'>Approve</a> <a href='deny.php?auth_id={$row['auth_id']}' class='btn btn-danger'>Deny</a></td>";
+                                    echo "<td>
+                                        <a href='approve.php?auth_id={$row['auth_id']}' class='btn btn-success'>Approve</a>
+                                        <a href='deny.php?auth_id={$row['auth_id']}' class='btn btn-danger'>Deny</a>
+                                        <button type='button' class='btn btn-primary' data-toggle='modal' data-target='#myModal' data-idcor='" . $row['tutee_cor'] . "'>
+                                            View COR
+                                        </button>
+                                    </td>";
                                     echo "</tr>";
+
                                 }
 
                                 ?>
@@ -333,6 +341,38 @@ if(isset($_SESSION["username"])){
                 <!-- /.container-fluid -->
 
             </div>
+            <!-- Modal -->
+                        <!-- Modal -->
+            <!-- Modal -->
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Show Certificate of Registration</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <img id="tutee_cor_img" src="" alt="COR Image" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('#myModal').on('show.bs.modal', function (event) {
+                        var button = $(event.relatedTarget);
+                        var tutee_cor = button.data('idcor');
+                        $('#tutee_cor_img').attr('src', tutee_cor);
+                    });
+                });
+            </script>
+
+
 
 
 

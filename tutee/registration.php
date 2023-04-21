@@ -22,7 +22,37 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $conf_password = $_POST['conf_password'];
     $repassword = $_POST['repassword'];
     $acc_status = "0";
-    $catid = "2";
+    $catid = "1";
+
+    $targetDirectory = "../img/cor/"; // specify the directory where you want to save the uploaded file
+    $uploadedFile = $_FILES["tutee_cor"]["name"]; // get the uploaded file name
+    $targetFile = $targetDirectory . basename($uploadedFile);
+
+    // Check if file already exists
+    if (file_exists($targetFile)) {
+        $info = pathinfo($uploadedFile);
+        $extension = isset($info['extension']) ? '.' . $info['extension'] : '';
+        $filenameOnly = $info['filename'];
+
+        // Append a number to the filename until a unique filename is found
+        $counter = 1;
+        while (file_exists($targetFile)) {
+            $newFilename = $filenameOnly . '(' . $counter . ')' . $extension;
+            $targetFile = $targetDirectory . $newFilename;
+            $counter++;
+        }
+        echo "File with the same name already exists. Renaming to: $newFilename";
+    }
+
+    if (move_uploaded_file($_FILES["tutee_cor"]["tmp_name"], $targetFile)) {
+        echo "File uploaded successfully.";
+        $tutee_cor_filename = $targetFile;
+    }
+    else {
+        $error[] = "Error uploading files!";
+    }
+
+
 
     // validation if username aleady exists in the database
     include('../connect.php');
@@ -41,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
     if (empty($errors)) {
         // put data into tbl_tutee and tbl_auth
-        $sql = "INSERT INTO tbl_tutee (tutee_fname, tutee_mname, tutee_lname, tutee_sex, tutee_email, tutee_course, tutee_year, tutee_bday) values ('$tutee_fname', '$tutee_mname', '$tutee_lname', '$tutee_sex', '$tutee_email', '$tutee_course', '$tutee_year', '$tutee_bday')";
+        $sql = "INSERT INTO tbl_tutee (tutee_fname, tutee_mname, tutee_lname, tutee_sex, tutee_stunum, tutee_email, tutee_cor_filename, tutee_course, tutee_year, tutee_bday) values ('$tutee_fname', '$tutee_mname', '$tutee_lname', '$tutee_sex', '$tutee_stunum', '$tutee_email', '$tutee_cor_filename', '$tutee_course', '$tutee_year', '$tutee_bday')";
         $sql2 = "INSERT INTO tbl_auth (username, password, acc_status, catid) values ('$username', '$conf_password', '$acc_status', '$catid')";
         $result = mysqli_query($database, $sql);
         $result2 = mysqli_query($database, $sql2);
@@ -95,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Create an Account! as Tutee</h1>
                         </div>
-                        <form class="user" method="POST">
+                        <form class="user" method="POST" enctype="multipart/form-data">
                             <label for="exampleFirstName">
                                 <h6 class="m-0 font-weight-bold text-primary text-align-center">Full Name</h6>
                             </label>
@@ -115,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                             </div>
                             <div class="hr-text">
                                 <hr>
-                                <span class="hr-text">OR</span>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-4 mb-3 mb-sm-0">
@@ -148,6 +177,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                             <div class="form-group">
                                 <input type="email" class="form-control" id="exampleInputEmail"
                                        placeholder="Email Address" name="tutee_email">
+                            </div>
+                            <div class="form-group">
+                                <label for="tutee_cor"><h6 class="m-0 font-weight-bold text-primary">Upload your <strong>Certificate of Registration</strong></h6></strong></label>
+                                <input type="file" class="form-control" id="exampleInputFile" name="tutee_cor">
+
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
