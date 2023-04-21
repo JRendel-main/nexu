@@ -433,9 +433,11 @@ if(isset($_SESSION["username"])){
                     $end_time = $_POST['end_time'];
                     $max_tutee = $_POST['max_tutee'];
                     // get the allowed duration to tbl_tutor table
-                    $sql = "SELECT duration FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
+
+                    // get the duration from the tbl_tutor table
                     $duration = $row['duration'];
 
                     // insert the data into the table
@@ -657,7 +659,7 @@ if(isset($_SESSION["username"])){
                 // get the message and image
                 $message = $_POST['message'];
                 $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $reciever_catid = 2;
+                $reciever_catid = 0;
                 $reciever_id = 1;
                 // remove the name of image 
 
@@ -668,12 +670,13 @@ if(isset($_SESSION["username"])){
                 // get the directory and save to database
                 $image = "../img/".$imageName;
                 // insert the message and image to the database
-                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, reciever_catid, reciever_id) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime', '$reciever_catid', '$reciever_id')";
+                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime', '$reciever_catid', '$reciever_id')";
                 $result = mysqli_query($database, $sql);
                 // check if the message inserted
                 if ($result) {
                     // display javascript alert
                     echo '<script>alert("Message sent successfully!")</script>';
+
                 } else {
                     // display javascript alert
                     echo '<script>alert("Message not sent!")</script>';

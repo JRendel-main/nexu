@@ -482,6 +482,16 @@ if(isset($_SESSION["username"])){
                             // Redirect to the schedule page
                             window.location.href = "request.php?scheduleid=" + scheduleId + "&tutorid=" + tutorId + "&tuteeid=" + tuteeId;
                         });
+                        // if cancel button clicked then cancel the slot use get method to pass the scheduleid, tuteeid and tuteeid
+                        $('#cancelBtn').on('click', function() {
+                            // Get the tutorid, tuteeid and scheduleid from the button
+                            var scheduleId = $('#scheduleid').text();
+                            var tutorId = $('#btn-status').data('tutorid');
+                            var tuteeId = $('#btn-status').data('tuteeid');
+                            // Redirect to the schedule page
+                            window.location.href = "cancel.php?scheduleid=" + scheduleId + "&tutorid=" + tutorId + "&tuteeid=" + tuteeId;
+                        });
+
                     </script>
 
 

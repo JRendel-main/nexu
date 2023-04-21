@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
     if (empty($errors)) {
         // put data into tbl_tutee and tbl_auth
-        $sql = "INSERT INTO tbl_tutee (tutee_fname, tutee_mname, tutee_lname, tutee_sex, tutee_stunum, tutee_email, tutee_cor_filename, tutee_course, tutee_year, tutee_bday) values ('$tutee_fname', '$tutee_mname', '$tutee_lname', '$tutee_sex', '$tutee_stunum', '$tutee_email', '$tutee_cor_filename', '$tutee_course', '$tutee_year', '$tutee_bday')";
+        $sql = "INSERT INTO tbl_tutee (tutee_fname, tutee_mname, tutee_lname, tutee_sex, tutee_stunum, tutee_email, tutee_cor, tutee_course, tutee_year, tutee_bday) values ('$tutee_fname', '$tutee_mname', '$tutee_lname', '$tutee_sex', '$tutee_stunum', '$tutee_email', '$tutee_cor_filename', '$tutee_course', '$tutee_year', '$tutee_bday')";
         $sql2 = "INSERT INTO tbl_auth (username, password, acc_status, catid) values ('$username', '$conf_password', '$acc_status', '$catid')";
         $result = mysqli_query($database, $sql);
         $result2 = mysqli_query($database, $sql2);

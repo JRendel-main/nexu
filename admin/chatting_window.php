@@ -197,6 +197,7 @@ if(isset($_SESSION["username"])){
                 </ul>
 
             </nav>
+            <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
@@ -219,12 +220,93 @@ if(isset($_SESSION["username"])){
                                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                          aria-labelledby="dropdownMenuLink">
                                         <div class="dropdown-header">Dropdown Header:</div>
-                                        <a class="dropdown-item" href="#">Refresh</a>
+                                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#viewMessagesModal">View My Messages</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="#">Add new message</a>
                                     </div>
                                 </div>
                             </div>
+                            <!-- Add a modal element with an ID to reference in JavaScript -->
+                            <div class="modal fade" id="viewMessagesModal" tabindex="-1" role="dialog" aria-labelledby="viewMessagesModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <!-- Modal content goes here -->
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="viewMessagesModalLabel">View My Messages</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <?php
+                                                // Retrieve messages from database
+                                                $sql = "SELECT * from tbl_message where id = '$adminid' AND catid = 0 ORDER BY messageid DESC";
+                                                $result = mysqli_query($database, $sql);
+
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    $messageid = $row['messageid'];
+                                                    $date = $row['date'];
+                                                    $id = $row['id'];
+                                                    $catid = $row['catid'];
+                                                    $mess_status = $row['mess_status'];
+                                                    $message = $row['message'];
+                                                    $recipient_id = $row['recipient_id'];
+                                                    $recipient_catid = $row['recipient_catid'];
+                                                    $mess_status = $row['mess_status'];
+
+                                                    if ($mess_status == 0) {
+                                                        $mess_status = "Unread";
+                                                    } else {
+                                                        $mess_status = "Read";
+                                                    }
+
+                                                    echo "<div class='card shadow mb-4'>
+                                                            <div class='card-header py-3'>
+                                                                <h6 class='m-0 font-weight-bold text-primary'>Message ID: $messageid</h6>
+                                                            </div>
+                                                            <div class='card-body'>
+                                                                <div class='row'>
+                                                                    <div class='col-md-4'>
+                                                                        <div class='card shadow'>
+                                                                            <div class='card-header py-3'>
+                                                                                <h6 class='m-0 font-weight-bold text-primary'>Message Details</h6>
+                                                                            </div>
+                                                                            <div class='card-body'>
+                                                                                <p><strong>Message ID: </strong>$messageid</p>
+                                                                                <p><strong>Date: </strong>" . formatDate($date) . "</p>
+                                                                                <p><strong>Sender ID: </strong>$id</p>
+                                                                                <p><strong>Sender Category ID: </strong>$catid</p>
+                                                                                <p><strong>Recipient ID: </strong>$recipient_id</p>
+                                                                                <p><strong>Recipient Category ID: </strong>$recipient_catid</p>
+                                                                                <p><strong>Message Status: </strong>$mess_status</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class='col-md-8'>
+                                                                        <div class='card shadow'>
+                                                                            <div class='card-header py-3'>
+                                                                                <h6 class='m-0 font-weight-bold text-primary'>Message</h6>
+                                                                            </div>
+                                                                            <div class='card-body'>
+                                                                                <p>$message</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>";
+                                                }
+
+                                            ?>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <!-- Add content for the modal footer -->
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Card Body -->
                             <div class="card-body">
                                 <div class="row">
@@ -233,7 +315,7 @@ if(isset($_SESSION["username"])){
                                         <!--List all the message here-->
                                             <?php
                                             // Retrieve messages from database
-                                            $sql = "SELECT messageid, date, id, catid, mess_status, message FROM tbl_message WHERE mess_status = 0 AND recipient_id = '$adminid' AND recipient_catid = 0 ORDER BY messageid DESC";
+                                            $sql = "SELECT messageid, date, id, catid, mess_status, message FROM tbl_message WHERE recipient_id = '$adminid' AND recipient_catid = 0 ORDER BY messageid DESC";
                                             $result = mysqli_query($database, $sql);
                                             function formatDate($date) {
                                                 // Convert date to timestamp
@@ -313,9 +395,6 @@ if(isset($_SESSION["username"])){
                                                             <h5><?php echo $name; ?></h5>
                                                             <p><?php echo $catname; ?></p>
                                                             <p><?php echo formatDate($date); ?></p>
-                                                            <?php if ($mess_status == 0) { ?>
-                                                                <span class="badge badge-danger">Unread</span>
-                                                            <?php } else { echo '<span class="badge badge-success">Read</span>';} ?>
                                                             <button class="btn btn-success" id="view" data-messid="<?php echo $messageid?>" data-id="<?php echo $adminid ?>" data-name="<?php echo $name ?>" data-time="<?php echo $date; ?>" data-message="<?php echo $message ?>"
                                                             >View</button>
                                                         </div>
@@ -344,9 +423,8 @@ if(isset($_SESSION["username"])){
                                                                         <img src="../img/undraw_profile.svg" class="img-fluid">
                                                                     </div>
                                                                     <div class="col-md-10">
-                                                                        <p id="messid">ID</p>
                                                                         <h5 id="name">Fullname</h5>
-                                                                        <p id="message">Message</p>
+                                                                            <p id="message" class="text-warning">Message</p>
                                                                         <small id="time">Time</small>
                                                                         <input type="hidden" id="id" value="<?php echo $adminid ?>">
                                                                         <input type="hidden" id="catid" value="0">
@@ -354,9 +432,10 @@ if(isset($_SESSION["username"])){
                                                                         <input type="hidden" id="recipient_catid" value="<?php echo $catid ?>">
                                                                         <input type="hidden" id="mess_status" value="<?php echo $mess_status ?>">
                                                                         <input type="hidden" id="now" value="<?php echo $now ?>">
+                                                                        <input type="hidden" id="messid" value="<?php echo $messageid ?>">
                                                                     </div>
                                                                 </div>
-                                                                <hr>
+
                                                             </div>
                                                             <div class="card-footer">
                                                                 <div class="row">
@@ -364,7 +443,7 @@ if(isset($_SESSION["username"])){
                                                                         <div class="input-group">
                                                                             <input type="text" class="form-control" id="reply" placeholder="Type your message here...">
                                                                             <div class="input-group-append">
-                                                                                <button class="btn btn-primary" type="button" id="sendReply">Send</button>
+                                                                                <button class="btn btn-primary" type="button" id="sendReply">Reply</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -372,7 +451,7 @@ if(isset($_SESSION["username"])){
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    </div>
                                                 </div>
                                                     </div>
                                                 </div>
@@ -383,11 +462,12 @@ if(isset($_SESSION["username"])){
                             </div>
                         </div>
             <script>
-                   // detect if view is clicked
+                $("#chat-window").removeClass("d-none");
                      $(document).on('click', '#view', function () {
                           // get the id of the message
                           var messageid = $(this).attr('data-messid');
                           var id = $(this).attr('data-id');
+                          //put this in new php variable
                           // get the name of the user
                           var name = $(this).attr('data-name');
                           // get the category of the user
@@ -409,10 +489,13 @@ if(isset($_SESSION["username"])){
                           $('#id').val(messageid);
                           // set the status to read
                            // detect if sendReply button clicked get the catid and id of user and recipient_catid, recipient_id
+
+                         // diplay new message in chat window if sendReply button is clicked
+
                     });  
                     $(document).on('click', '#sendReply', function () {
                         var messageid = $('#messid').val();
-                        var message = $('#message').val();
+                        var message = $('#reply').val();
                         var time = $('#date').val();
                         var status = $('#status').val();
                         var catid = $('#catid').val();
@@ -442,7 +525,7 @@ if(isset($_SESSION["username"])){
                                 $('#chat-window').html(data);
                             }
                         });
-                    });  
+                    });
 
             </script>
 
