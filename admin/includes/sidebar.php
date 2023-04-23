@@ -41,6 +41,7 @@
                 <a class="collapse-item" href="tutee_approval.php">Tutee</a>
             </div>
         </div>
+    </li>
         <li class="nav-item">
         <a class="nav-link" href="edit_duration.php">
             <i class="fa-sharp fa-solid fa-pen-to-square"></i>
@@ -49,12 +50,42 @@
             <i class="fa-sharp fa-solid fa-envelope"></i>
             <span> Inbox</span></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo2"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>User Account Settings</span>
+        </a>
+        <div id="collapseTwo2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Category:</h6>
+                <a class="collapse-item" href="tutor_settings.php">Tutor</a>
+                <a class="collapse-item" href="tutee_settings.php">Tutee</a>
+            </div>
+        </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
     <div class="sidebar-heading">
         Account Settings
     </div>
+    <li class="nav-item">
+        <a class="nav-link" href="edit_profile.php">
+            <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+            <span> Edit Profile</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="change_password.php">
+            <i class="fa-sharp fa-solid fa-key"></i>
+            <span> Change Password</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="../logout.php">
+            <i class="fa-sharp fa-solid fa-sign-out"></i>
+            <span> Logout</span></a>
+    </li>
+    <hr class="sidebar-divider d-none d-md-block">
+
     
 
     <!-- Sidebar Toggler (Sidebar) -->

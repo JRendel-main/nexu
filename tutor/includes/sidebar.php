@@ -30,23 +30,22 @@
 
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-           aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Account Settings</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-             data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Settings</h6>
-                <a class="collapse-item" href="utilities-color.html">Profile</a>
-                <a class="collapse-item" href="utilities-border.html">Account</a>
-            </div>
-        </div>
+        <a class="nav-link" href="schedule.php">
+            <i class="fas fa-fw fa-calendar"></i>
+            <span> Schedule</span></a>
     </li>
+    
 
     <!-- Divider -->
     <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="nav-item">
+        <a class="nav-link" href="logout.php">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span> Logout</span></a>
+
+    </div>
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

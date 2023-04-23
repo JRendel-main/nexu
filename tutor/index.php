@@ -571,7 +571,7 @@ if(isset($_SESSION["username"])){
                         var scheduleId = $("#deleteScheduleModal").data("scheduleid");
 
                         // When the "Delete" button in the modal is clicked, delete the schedule
-                        $("#confirmDeleteSchedule").click(function() {
+                        $("#confirmreDeleteSchedule").click(function() {
                             $.ajax({
                                 url: "delete_schedule.php",
                                 method: "POST",
