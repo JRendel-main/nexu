@@ -9,6 +9,15 @@
 
 <!-- Custom scripts for all pages-->
 <script src="../js/sb-admin-2.min.js"></script>
+<script>
+// Add the following script to enable searchable dropdown
+$(document).ready(function() {
+  $('.dropdown-menu .dropdown-item').click(function() {
+    var selectedCourse = $(this).text();
+    $('#exampleFormControlSelect1').val(selectedCourse);
+  });
+});
+</script>
 
 </body>
 

@@ -16,6 +16,9 @@
 <!-- Page level custom scripts -->
 <script src="../js/demo/datatables-demo.js"></script>
 
+<!-- Add an event listener to the filter button using jQuery -->
+
+
 </body>
 
 </html>

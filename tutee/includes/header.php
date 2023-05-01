@@ -56,6 +56,75 @@
         align-items: center;
         text-align: center;
     }
+    .green-gradient {
+        background: #91EAE4;
+        background: -webkit-linear-gradient(to right, #86A8E7, #91EAE4);
+        background: linear-gradient(to right, #86A8E7, #91EAE4);
+    }
+
+    /* BSIT */
+.bg-gradient-bsit {
+    background-image: linear-gradient(to right, #F44336, #E53935);
+}
+
+/* COE */
+.bg-gradient-coe {
+  background-image: linear-gradient(to right, #673AB7, #9C27B0);
+}
+
+/* COED */
+.bg-gradient-coed {
+  background-image: linear-gradient(to right, #FF9800, #FFC107);
+}
+
+/* CAS */
+.bg-gradient-cas {
+  background-image: linear-gradient(to right, #FFEB3B, #FDD835);
+}
+
+/* COC */
+.bg-gradient-coc {
+    background-image: linear-gradient(to right, #8BC34A, #CDDC39);
+}
+
+/* CON */
+.bg-gradient-con {
+  background-image: linear-gradient(to right, #009688, #26A69A);
+}
+
+/* CMBT */
+.bg-gradient-cmbt {
+    background-image: linear-gradient(to right, #00BCD4, #03A9F4);
+}
+
+/* CIT */
+.bg-gradient-cit {
+  background-image: linear-gradient(to right, #607D8B, #546E7A);
+}
+
+/* CPADM */
+.bg-gradient-cpadm {
+  background-image: linear-gradient(to right, #9E9E9E, #757575);
+}
+
+/* LBH */
+.bg-gradient-lbh {
+  background-image: linear-gradient(to right, #3F51B5, #2196F3);
+}
+
+/* Default */
+.bg-gradient-primary {
+  background-image: linear-gradient(to right, #4e73df, #224abe);
+}
+
+.bg-gradient-default {
+    background-image: linear-gradient(to right, #4e73df, #224abe);
+}
+
+.filter-button {
+    border: none; /* Add this line to remove the border on the button */
+}
+
 
 
 </style>

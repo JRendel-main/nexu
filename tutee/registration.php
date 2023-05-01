@@ -110,7 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
             <div class="row">
-                <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <img src="../img/register.jpg" alt="" width="100%" height="100%">
+                </div>
                 <div class="col-lg-7">
                     <div class="p-5 text-center">
                         <?php 
@@ -195,12 +197,18 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                                     </select>
                                 </div>
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <select class="form-control form-control-plaintext dropdown" id="exampleFormControlSelect1" name="tutee_course">
-                                        <option>Course</option>
-                                        <option value="BSIT">BSIT</option>
-                                        <option value="BSIS">BSIS</option>
-                                        <option value="BSBA">BSBA</option>
-                                        <option value="BSA">BSA</option>
+                                    <select class="form-control form-control-plaintext dropdown" id="exampleFormControlSelect1" name="tutor_course">
+                                    <option class="dropdown-item" disabled default>Department</option>
+                                    <option class= "dropdown-item" value="CICT"><b>CICT</b> - College of Information and Computing Sciences (CICT)</option>
+                                    <option class= "dropdown-item" value="COE"><b>COE</b> - College of Engineering</option>
+                                    <option class= "dropdown-item" value="COED"><b>COED</b> - College of Education</option>
+                                    <option class= "dropdown-item" value="CAS"><b>CAS</b> - College of Arts and Sciences</option>
+                                    <option class= "dropdown-item" value="COC"><b>COC</b> - College of Criminology</option>
+                                    <option class= "dropdown-item" value="CON"><b>CON</b> - College of Nursing</option>
+                                    <option class= "dropdown-item" value="CMBT"><b>CMBT</b> - College of Management and Business Technology</option>
+                                    <option class= "dropdown-item" value="CIT"><b>CIT</b> - College of Industrial Technology</option>
+                                    <option class= "dropdown-item" value="CPADM"><b>CPADM</b> - College of Public Administration and Disaster Management</option>
+                                    <option class= "dropdown-item" value="LBH"><b>LBH</b> - Laboratory Highschool</option>
                                     </select>
                                 </div>
                             </div>

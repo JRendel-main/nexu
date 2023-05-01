@@ -70,6 +70,45 @@ a {
 text-decoration:none;    
 }
 
+.testimonial-card .card-up {
+  height: 120px;
+  overflow: hidden;
+  border-top-left-radius: .25rem;
+  border-top-right-radius: .25rem;
+}
+
+.aqua-gradient {
+  background: linear-gradient(40deg, #2096ff, #05ffa3) !important;
+}
+
+.blue-gradient {
+    background: linear-gradient(40deg, #2b69ff, #00b0ff) !important;
+}
+
+.purple-gradient {
+    background: linear-gradient(40deg, #7a00ff, #e100ff) !important;
+}
+
+.peach-gradient {
+    background: linear-gradient(40deg, #ff9a9e, #fad0c4) !important;
+}
+
+.red-gradient {
+    background: linear-gradient(40deg, #f77062, #fe5196) !important;
+}
+
+.yellow-gradient {
+    background: linear-gradient(40deg, #fddb92, #d1fdff) !important;
+}
+
+.testimonial-card .avatar {
+  width: 120px;
+  margin-top: -60px;
+  overflow: hidden;
+  border: 5px solid #fff;
+  border-radius: 50%;
+}
+
 
 </style>
 <!-- Page Wrapper -->
@@ -90,18 +129,6 @@ text-decoration:none;
                 </button>
 
                 <!-- Topbar Search -->
-                <form
-                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                               aria-label="Search" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -300,8 +327,56 @@ text-decoration:none;
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Tutor List</h1>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <h1 class="h3 mb-0 text-gray-800">Tutor List</h1>
+                    </div>
+                    <div class="col-sm-3">
+                        <form method="GET" action="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="search" name="search" placeholder="Search for..." value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+                    <div class="accordion ml-auto" id="filterAccordion">
+                        <div class="card">
+                            <div class="card-header" id="filterHeading">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="true" aria-controls="filterCollapse">
+                                        <i class="fas fa-filter"></i> Filter
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="filterCollapse" class="collapse" aria-labelledby="filterHeading" data-parent="#filterAccordion">
+                                <div class="card-body">
+                                    <form method="GET">
+                                        <div class="form-group">
+                                            <label for="courses">Filter by Course:</label><br>
+                                            <input type="checkbox" name="courses[]" value="CICT"> CICT<br>
+                                            <input type="checkbox" name="courses[]" value="COE"> COE<br>
+                                            <input type="checkbox" name="courses[]" value="COED"> COED<br>
+                                            <input type="checkbox" name="courses[]" value="CAS"> CAS<br>
+                                            <input type="checkbox" name="courses[]" value="COC"> COC<br>
+                                            <input type="checkbox" name="courses[]" value="CON"> CON<br>
+                                            <input type="checkbox" name="courses[]" value="CMBT"> CMBT<br>
+                                            <input type="checkbox" name="courses[]" value="CIT"> CIT<br>
+                                            <input type="checkbox" name="courses[]" value="CPADM"> CPADM<br>
+                                            <input type="checkbox" name="courses[]" value="LBH"> LBH<br>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                     <?php if (isset($alert_msg) && isset($alert_style)): ?>
                         <div class=row>
@@ -315,47 +390,132 @@ text-decoration:none;
                     <?php endif; ?>
                         <div class="row">
                     <?php
-                        //get the list of tutor from tbl_tutor where their auth_status is 1 from tbl_auth using auth_id
-                        $sql = "SELECT * FROM tbl_tutor INNER JOIN tbl_auth ON tbl_tutor.auth_id = tbl_auth.auth_id WHERE tbl_auth.acc_status = 1";
-                        $result = mysqli_query($database, $sql);
+                        function getColor($tutor_course) {
+                            switch ($tutor_course) {
+                                case 'CICT':
+                                    return array('bg-gradient-bsit', 'College of Information and Communication Technology (CICT)');
+                                case 'COE':
+                                    return array('bg-gradient-coe', 'College of Engineering (COE)');
+                                    break;
+                                case 'COED':
+                                    return array('bg-gradient-coed', 'College of Education (COED)');
+                                    break;
+                                case 'CAS':
+                                    return array('bg-gradient-cas', 'College of Arts and Sciences (CAS)');
+                                    break;
+                                case 'COC':
+                                    return array('bg-gradient-coc', 'College of Criminology (COC)');
+                                    break;
+                                case 'CON':
+                                    return array('bg-gradient-con', 'College of Nursing (CON)');
+                                    break;
+                                case 'CMBT':
+                                    return array('bg-gradient-cmbt', 'College of Management and Business Technology (CMBT)');
+                                    break;
+                                case 'CIT':
+                                    return array('bg-gradient-cit', 'College of Industrial Technology (CIT)');
+                                    break;
+                                case 'CPADM':
+                                    return array('bg-gradient-cpadm', 'College of Public Administration (CPADM)');
+                                    break;
+                                case 'LBH':
+                                    return array('bg-gradient-lbh', 'Laboratory High School (LBH)');
+                                    break;
+                                default:
+                                    return array('bg-gradient-default', 'Undefined');
+                            }
+                        }
 
-                        while($row = mysqli_fetch_assoc($result)) {
-                            $tutorid = $row['tutorid'];
-                            $tutor_fname = $row['tutor_fname'];
-                            $tutor_mname = $row['tutor_mname'];
-                            $tutor_lname = $row['tutor_lname'];
-                            $tutor_bio = $row['tutor_bio'];
-                            $tutor_email = $row['tutor_email'];
-                            $tutor_course = $row['tutor_course'];
-                            $fullname = $tutor_fname . ' ' . $tutor_mname . ' ' . $tutor_lname;
+                    //get the list of tutor from tbl_tutor where their auth_status is 1 from tbl_auth using auth_id
+                    $sql = "SELECT * FROM tbl_tutor INNER JOIN tbl_auth ON tbl_tutor.auth_id = tbl_auth.auth_id WHERE tbl_auth.acc_status = 1";
+
+                    //check if courses are selected
+                    if(isset($_GET['courses']) && !empty($_GET['courses'])){
+                        $courses = $_GET['courses'];
+                        $sql .= " AND (";
+                        foreach($courses as $course){
+                            $sql .= "tutor_course = '$course' OR ";
+                        }
+                        $sql = rtrim($sql, " OR ");
+                        $sql .= ")";
+                    }
+                    if (isset($_GET['search']) && !empty($_GET['search'])) {
+                        $search = mysqli_real_escape_string($database, $_GET['search']);
+                        $sql .= " AND (tutor_fname LIKE '%{$search}%' OR tutor_mname LIKE '%{$search}%' OR tutor_lname LIKE '%{$search}%')";
+                    }
+
+                    $result = mysqli_query($database, $sql);
+
+                    while($row = mysqli_fetch_assoc($result)) {
+                        $tutorid = $row['tutorid'];
+                        $tutor_fname = $row['tutor_fname'];
+                        $tutor_mname = $row['tutor_mname'];
+                        $tutor_lname = $row['tutor_lname'];
+                        $tutor_bio = $row['tutor_bio'];
+                        $tutor_email = $row['tutor_email'];
+                        $tutor_course = $row['tutor_course'];
+                        $fullname = $tutor_fname . ' ' . $tutor_mname . ' ' . $tutor_lname;
+                        $tutor_stunum = $row['tutor_stunum'];
+                        $colorData = getColor($tutor_course);
+                        $headColor = $colorData[0];
+                        $headerText = $colorData[1];
+
+                        $sql2 = "SELECT * FROM tbl_expertise WHERE tutorid = '$tutorid'";
+                        $result2 = mysqli_query($database, $sql2);
+                        $expertise_list = ""; // create an empty string to hold the list of expertise
+                        while($row2 = mysqli_fetch_assoc($result2)) {
+                            // concatenate each expertise and expertise level to the string, separated by a comma and space
+                            $expertise_list .= $row2['expertise'] . " (" . $row2['expertise_level'] . "), ";
+                        }
+                        // remove the last comma and space from the string
+                        $expertise_list = rtrim($expertise_list, ", ");
+                            // echo array
                             echo '
-                            <div class="col-lg-3 col-md-6 col-12 mt-2 pt-8">
-                                <div class="card border-0 bg-light rounded shadow">
-                                    <div class="card-body p-4">
-                                    <div class="row>">
-                                    <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">Full time</span>
-                                        <span class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">Part time</span>
+                            <section class="mx-auto my-5 col-md-6" style="max-width: 23rem;">
+                                <div class="card testimonial-card mt-2 mb-3" style="width: 100%;">
+                                    <div class="card-up ' . $colorData[0] . '"></div>
+                                    <div class="avatar mx-auto white">
+                                        <img src="../img/user.png" class="rounded-circle img-fluid" alt="Profile Picture">
                                     </div>
-                                    <img src="../img/user.png" class="card-img-top rounded-circle" alt="Profile Picture" style="height: 80px; width: 80px;">
-                                        <h5>' . $fullname . '</h5>
-                                        <div class="mt-3">
-                                            <span class="text-muted d-block"><i class="fa fa-envelope" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">' .$tutor_email . '</a></span>
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i>'.  $tutor_course . '</span>
+                                    <div class="card-body text-center" style="height: 300px; overflow-y: auto;">
+                                        <h4 class="card-title font-weight-bold">' . $fullname . '</h4>
+                                        <p class="card-description">' . $colorData[1] . '</p>
+                                        <hr>
+                                        <p><i class="fa fa-address-card-o"></i><strong><u> ' . $tutor_bio . '</u></strong></p>
+                                        <p><i class="fa fa-envelope-o"></i> ' . $tutor_email . '</p>
+                                        <p><i class="fa fa-graduation-cap"></i> ' . $expertise_list . '</p> <!-- display the list of expertise -->
                                     </div>
-                                    <div class="mt-3">
-                                    <?php echo $bio; ?>
+                                    <div class="card-footer">
+                                        <div class="text-center">
+                                            <button class="btn btn-primary view-details" data-toggle="modal" data-target="#tutorModal" data-tutor-name="' . $fullname . '" data-tutor-email="' . $tutor_email . '" data-tutor-course="' . $tutor_course . '" data-tutor-bio="' . $tutor_bio . '" data-tutorid="' . $tutorid . '" data-tutor-stunum="' . $tutor_stunum . '">View Details</button>
+                                        </div>
                                     </div>
-                                    <div class="mt-3">
-                                    <button class="btn btn-primary view-details" data-toggle="modal" data-target="#tutorModal" data-tutor-name="' . $fullname . '" data-tutor-email="' . $tutor_email . '" data-tutor-course="' . $tutor_course . '" data-tutor-bio="' . $tutor_bio . '" data-tutorid="'. $tutorid .'">View Details</button>
-                                    </div>
-                                    </div>
-                                    </div>
-                                    </div>';
-                                    }      
+                                </div>
+                            </section>';
+
+                        }
                         ?>
+                    </div>
                 </div>
             </div>
-        </div>
+        <script>
+            $(document).ready(function() {
+                // Filter tutor cards based on search input
+                $('#tutor-search').on('input', function() {
+                    var searchValue = $(this).val().toLowerCase();
+                    $('.tutor-card').each(function() {
+                        var tutorName = $(this).data('tutor-name').toLowerCase();
+                        if (tutorName.includes(searchValue)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+
+
+        </script>
         <!-- End of Main Content -->
 
         <!-- Footer -->
@@ -368,10 +528,6 @@ text-decoration:none;
         </footer>
         <!-- End of Footer -->
 
-    </div>
-    <!-- End of Content Wrapper -->
-
-</div>
 <!-- End of Page Wrapper -->
 
 <!-- Scroll to Top Button-->
@@ -400,8 +556,10 @@ text-decoration:none;
                 move_uploaded_file($_FILES['image']['tmp_name'], $target);
                 // get the directory and save to database
                 $image = "../img/".$imageName;
+                $recipient_catid = 0;
+                $recipient_id = 1;
                 // insert the message and image to the database
-                $sql = "INSERT INTO tbl_message (id, catid, message, image, date) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime')";
+                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime', '$recipient_catid', '$recipient_id')";
                 $result = mysqli_query($database, $sql);
                 // check if the message inserted
                 if ($result) {
@@ -490,19 +648,35 @@ text-decoration:none;
         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Tutor information will be displayed here -->
-          <div class="row">
-              <div class="col-4">
-                  <img src="../img/user.png" alt="Tutor Image" class="img-fluid rounded-circle col-12" id="tutorImage">
-              </div>
-              <div class="col-8">
-                    <h5 id="tutorName"></h5>
-                    <p id="tutorEmail"></p>
-                    <p id="tutorCourse"></p>
-                    <p id="tutorBio"></p>
-              </div>
+        <div class="row">
+          <div class="col-lg-4 gradient-custom text-center text-white" style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+            <img src="../img/user.png" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
+            <p id="tutorTitle"></p>
+            <i class="far fa-edit mb-5"></i>
           </div>
-          <input type="hidden" id="tutorId">
+          <div class="col-lg-8">
+            <div class="card-body p-4">
+              <h4 id="tutorName"></h4>
+              <hr class="mt-0 mb-4">
+              <div class="row pt-1">
+                <div class="col-6 mb-3">
+                  <h6>Email</h6>
+                  <p class="text-muted" id="tutorEmail"></p>
+                </div>
+                <div class="col-6 mb-3">
+                  <h6>Student Number:</h6>
+                  <p class="text-muted" id="tutorStunum"></p>
+                </div>
+              </div>
+              <div class="d-flex justify-content-start">
+                <a href="#!"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
+                <a href="#!"><i class="fab fa-twitter fa-lg me-3"></i></a>
+                <a href="#!"><i class="fab fa-instagram fa-lg"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="tutorId">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -511,6 +685,7 @@ text-decoration:none;
     </div>
   </div>
 </div>
+
 <script>
     // JavaScript code to handle the modal
     $(document).ready(function() {
@@ -522,12 +697,23 @@ text-decoration:none;
         var tutorCourse = $(this).data('tutor-course');
         var tutorBio = $(this).data('tutor-bio');
         var tutorId = $(this).data('tutorid');
+        var tutorStunum = $(this).data('tutor-Stunum');
+        var tutorExpertise = $(this).data('tutor-expertise');
+        var tutorExpertiseLevel = $(this).data('tutor-expertise-level');
 
         // Set the tutor information in the modal
-        $('#tutorName').text('Fullname: ' + tutorName);
-        $('#tutorEmail').text('Email: ' + tutorEmail);
-        $('#tutorCourse').text('Course: ' + tutorCourse);
-        $('#tutorBio').text('Bio: ' + tutorBio);
+        $('#tutorName').text(tutorName);
+        $('#tutorEmail').text(tutorEmail);
+        $('#tutorCourse').text(tutorCourse);
+        $('#tutorBio').text(tutorBio);
+        $('#tutorExpertise').text(tutorExpertise);
+        $('#tutorExpertiseLevel').text(tutorExpertiseLevel);
+
+        //send expertise and expertise level to modal
+
+
+        $('#tutorStunum').text(tutorStunum);
+
 
         // pass tutorid to view schedule button in modal
         $('#viewScheduleBtn').data('tutorid', tutorId);
@@ -538,7 +724,7 @@ text-decoration:none;
         // Get the tutor ID from modal;
         var tutorId = $(this).data('tutorid');
         // Redirect to the schedule page
-        window.location.href = 'schedule_list.php?tutorId=' + tutorId + '&tuteeId=' + <?php echo $tutorid ?>;
+        window.location.href = 'schedule_list.php?tutorId=' + tutorId + '&tuteeId=' + <?php echo $tuteeid ?>;
 
   });
 });

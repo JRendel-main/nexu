@@ -9,10 +9,10 @@ $username = $_SESSION['username'];
 $catid = $_SESSION['catid'];
 
 if(isset($_SESSION["username"])){
-    if(($_SESSION["username"])=="" or $_SESSION['catid']!=1){
+    if(($_SESSION["username"])=="" or $_SESSION['catid']!=2){
         header("location: ../login.php");
     }else{
-        $tuteeid = $_SESSION['tuteeid'];
+        $tutorid = $_SESSION['tutorid'];
         $authid = $_SESSION['authid'];
     }
 
@@ -21,20 +21,9 @@ if(isset($_SESSION["username"])){
 }
 
 
+
+
 ?>
-<style>
-    .modal.fade .modal-dialog {
-        -webkit-transform: translate(0, -50px);
-        transform: translate(0, -50px);
-        transition: transform 0.3s ease-out;
-    }
-
-    .modal.fade.show .modal-dialog {
-        -webkit-transform: translate(0, 0);
-        transform: translate(0, 0);
-    }
-
-</style>
 <!-- Page Wrapper -->
 <div id="wrapper">
     <?php include 'includes/sidebar.php'; ?>
@@ -99,7 +88,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-bell fa-fw"></i>
                             <!-- Counter - Alerts -->
-                            <span class="badge badge-danger badge-counter">2+</span>
+                            <span class="badge badge-danger badge-counter">3+</span>
                         </a>
                         <!-- Dropdown - Alerts -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -150,7 +139,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">123131</span>
+                            <span class="badge badge-danger badge-counter">7</span>
                         </a>
                         <!-- Dropdown - Messages -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -160,7 +149,7 @@ if(isset($_SESSION["username"])){
                             </h6>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="../img/undraw_profile_1.svg"
+                                    <img class="rounded-circle" src="img/undraw_profile_1.svg"
                                          alt="...">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
@@ -212,14 +201,13 @@ if(isset($_SESSION["username"])){
 
                     <div class="topbar-divider d-none d-sm-block"></div>
                     <?php
-                    // get the name of tutee using adminid
-                    $tuteeid = $_SESSION['tuteeid'];
-                    $sql = "SELECT * FROM tbl_tutee WHERE tuteeid = '$tuteeid'";
+                    // get the name of admin using adminid
+                    $tutorid = $_SESSION['tutorid'];
+                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
-                    $tuteename = $row['tutee_fname'] . ' ' .$row['tutee_lname'];
+                    $tutorname = $row['tutor_fname'];
 
-                    //get the id of tutee
 
 
                     ?>
@@ -228,7 +216,7 @@ if(isset($_SESSION["username"])){
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $tuteename; ?></span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $tutorname; ?></span>
                             <img class="img-profile rounded-circle"
                                  src="../img/undraw_profile.svg">
                         </a>
@@ -258,140 +246,137 @@ if(isset($_SESSION["username"])){
                 </ul>
 
             </nav>
-
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-            </div>
-                
-        </div>
-        <!-- End of Main Content -->
+                <div class="container">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Approval Requests</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Fullname</th>
+                                        <th>Topic - Description</th>
+                                        <th>Date - Time</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    $tutorid = $_SESSION['tutorid'];
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2020</span>
+                                    // get the requestid, scheduleid, tutorid, tuteeid and request_status on tbl_request, get the fullname of tutee on tbl_tutee using tuteeid, get the topic, description, duration, date and start_time on tbl_schedule using scheduleid
+                                    $sql = "SELECT * FROM tbl_request WHERE tutorid = '$tutorid' AND request_status = 1";
+                                    $result = mysqli_query($database, $sql);
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $requestid = $row['requestid'];
+                                        $scheduleid = $row['scheduleid'];
+                                        $tuteeid = $row['tuteeid'];
+                                        $request_status = $row['request_status'];
+
+                                        $sql1 = "SELECT * FROM tbl_tutee WHERE tuteeid = '$tuteeid'";
+                                        $result1 = mysqli_query($database, $sql1);
+                                        $row1 = mysqli_fetch_assoc($result1);
+                                        $tutee_fullname = $row1['tutee_fname'] . " " . $row1['tutee_lname'];
+
+                                        $sql2 = "SELECT * FROM tbl_schedule WHERE scheduleid = '$scheduleid'";
+                                        $result2 = mysqli_query($database, $sql2);
+                                        $row2 = mysqli_fetch_assoc($result2);
+                                        $topic = $row2['topic'];
+                                        $description = $row2['description'];
+                                        $duration = $row2['duration'];
+                                        $date = $row2['date'];
+                                        $start_time = $row2['start_time'];
+
+                                        //reformat the date and time to be more readable
+                                        $date = date("F j, Y", strtotime($date));
+                                        $start_time = date("h:i A", strtotime($start_time));
+
+                                        // put the topic and description to card title and body and add design
+
+                                        //put duration to pill and add design using bootstrap
+                                        if ($duration == 1) {
+                                            $duration = $duration . " hour";
+                                        } else {
+                                            $duration = $duration . " hours";
+                                        }
+
+
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $tutee_fullname; ?></td>
+                                            <td>
+                                                <div class="card shadow mb-4">
+                                                    <div class="card-header py-3">
+                                                        <h6 class="m-0 font-weight-bold text-primary"><?php echo $topic; ?></h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <?php echo $description; ?>
+                                                    </div>
+                                                </div>
+                                            <td><?php echo $date . " - " . $start_time; ?></td>
+                                            <td>
+                                                <span class="badge badge-success"><?php echo $duration; ?></span>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
-        <!-- End of Footer -->
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Nexus Link 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Page Wrapper -->
 
-</div>
-<!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<?php
-            // Get the tutor's schedule
-            $catid = 2;
-            // get if post submitted
-            if (isset($_POST['contactadmin-submit'])) {
-                // get date and time now
-                $date = date('Y-m-d');
-                $time = date('H:i:s');
-
-                $datetime = $date.' '.$time;
-                // get the message and image
-                $message = $_POST['message'];
-                $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $reciever_catid = 0;
-                $reciever_id = 1;
-                // remove the name of image 
-
-                // change the name of image to datetime and save to folder remove the original name
-                $imageName = date('YmdHis').'.'.$imageExtension;
-                $target = "../img/".$imageName;
-                move_uploaded_file($_FILES['image']['tmp_name'], $target);
-                // get the directory and save to database
-                $image = "../img/".$imageName;
-                // insert the message and image to the database
-                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tuteeid', '$catid', '$message', '$image', '$datetime', '$reciever_catid', '$reciever_id')";
-                $result = mysqli_query($database, $sql);
-                // check if the message inserted
-                if ($result) {
-                    // display javascript alert
-                    echo '<script>alert("Message sent successfully!")</script>';
-                } else {
-                    // display javascript alert
-                    echo '<script>alert("Message not sent!")</script>';
-                }
-            }
-            ?>
-
-            <!-- Add the modal HTML code to your page -->
-<div class="modal" id="messageModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal header -->
-            <div class="modal-header">
-                <h5 class="modal-title">Message Admin</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form enctype="multipart/form-data" name="contactadmin" method="POST">
-                    <div class="form-group">
-                        <label for="message">Message:</label>
-                        <textarea class="form-control" id="message" name="message" rows="5"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="image">Image:</label>
-                        <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png">
-                    </div>
-                    <button type="submit" name="contactadmin-submit" class="btn btn-primary">Send</button>
-                </form>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Add the modal trigger button/icon to your page -->
-<a href="#" id="messageModalTrigger" class="btn btn-primary rounded-circle position-fixed" style="bottom: 20px; right: 20px; z-index: 9999;">
-    <i class="fas fa-envelope"></i>
-</a>
-
-<!-- Add the required CSS and JS for the modal and animations -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-<script src="https://kit.fontawesome.com/c7e3b0d05b.js" crossorigin="anonymous"></script>
-<script>
-    $(document).ready(function() {
-        // Add animation to the modal
-        $("#messageModal").addClass("animate__animated animate__bounceInRight");
-
-        // Show/hide the modal when the trigger button/icon is clicked
-        $("#messageModalTrigger").click(function() {
-            $("#messageModal").modal("toggle");
-        });
-    });
-</script>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="../login.php">Logout</a>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -400,4 +385,4 @@ if(isset($_SESSION["username"])){
 
 
 
-<?php include 'includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>

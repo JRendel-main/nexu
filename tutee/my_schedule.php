@@ -33,6 +33,82 @@ if(isset($_SESSION["username"])){
         -webkit-transform: translate(0, 0);
         transform: translate(0, 0);
     }
+    .badge {
+        padding: 5px 8px;
+        border-radius: 3px;
+        letter-spacing: 0.5px;
+        font-size: 12px;
+    }
+
+    .btn-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active {
+        box-shadow: 0 3px 7px rgb(109 199 122 / 50%) !important;
+    }
+    .btn-primary, .btn-outline-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active, .bg-soft-primary .border, .alert-primary, .alert-outline-primary, .badge-outline-primary, .nav-pills .nav-link.active, .pagination .active a, .form-group .form-control:focus, .form-group .form-control.active, .custom-control-input:checked ~ .custom-control-label:before, .custom-control-input:focus ~ .custom-control-label::before, .form-control:focus, .social-icon li a:hover, #topnav .has-submenu.active.active .menu-arrow, #topnav.scroll .navigation-menu > li:hover > .menu-arrow, #topnav.scroll .navigation-menu > li.active > .menu-arrow, #topnav .navigation-menu > li:hover > .menu-arrow, .flatpickr-day.selected, .flatpickr-day.selected:hover, .form-check-input:focus, .form-check-input.form-check-input:checked, .container-filter li.active, .container-filter li:hover {
+        border-color: #6dc77a !important;
+    }
+    .bg-primary, .btn-primary, .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.focus, .btn-outline-primary:not(:disabled):not(.disabled):active, .badge-primary, .nav-pills .nav-link.active, .pagination .active a, .custom-control-input:checked ~ .custom-control-label:before, #preloader #status .spinner > div, .social-icon li a:hover, .back-to-top:hover, .back-to-home a, ::selection, #topnav .navbar-toggle.open span:hover, .owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots.clickable .owl-dot:hover span, .watch-video a .play-icon-circle, .sidebar .widget .tagcloud > a:hover, .flatpickr-day.selected, .flatpickr-day.selected:hover, .tns-nav button.tns-nav-active, .form-check-input.form-check-input:checked {
+        background-color: #6dc77a !important;
+    }
+    .btn {
+        padding: 8px 20px;
+        outline: none;
+        text-decoration: none;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        font-weight: 600;
+        border-radius: 5px;
+    }
+    .btn-primary {
+        background-color: #6dc77a !important;
+        border: 1px solid #6dc77a !important;
+        color: #fff !important;
+        box-shadow: 0 3px 7px rgb(109 199 122 / 50%);
+    }
+
+    a {
+        text-decoration:none;
+    }
+
+    .testimonial-card .card-up {
+        height: 120px;
+        overflow: hidden;
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+    }
+
+    .aqua-gradient {
+        background: linear-gradient(40deg, #2096ff, #05ffa3) !important;
+    }
+
+    .blue-gradient {
+        background: linear-gradient(40deg, #2b69ff, #00b0ff) !important;
+    }
+
+    .purple-gradient {
+        background: linear-gradient(40deg, #7a00ff, #e100ff) !important;
+    }
+
+    .peach-gradient {
+        background: linear-gradient(40deg, #ff9a9e, #fad0c4) !important;
+    }
+
+    .red-gradient {
+        background: linear-gradient(40deg, #f77062, #fe5196) !important;
+    }
+
+    .yellow-gradient {
+        background: linear-gradient(40deg, #fddb92, #d1fdff) !important;
+    }
+
+    .testimonial-card .avatar {
+        width: 120px;
+        margin-top: -60px;
+        overflow: hidden;
+        border: 5px solid #fff;
+        border-radius: 50%;
+    }
+
 
 </style>
 <!-- Page Wrapper -->
@@ -150,7 +226,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">123131</span>
+                            <span class="badge badge-danger badge-counter">5</span>
                         </a>
                         <!-- Dropdown - Messages -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -263,70 +339,189 @@ if(isset($_SESSION["username"])){
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
+                <div class="container-fluid">
+                    <?php if (isset($alert_msg) && isset($alert_style)): ?>
+                        <div class=row>
+                            <div class="alert alert-<?php echo $alert_style; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $alert_msg; ?>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">My Schedule List</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Topic and Description</th>
+                                        <th>Tutor Name</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <?php
+                                    function errorHandler($errno, $errstr, $errfile, $errline) {
+                                        // Create an error message using Bootstrap alert classes
+                                        $error = '<div class="alert alert-danger" role="alert">';
+                                        $error .= '<strong>Error:</strong> ' . $errstr;
+                                        $error .= '</div>';
+
+                                        // Display the error message
+                                        echo $error;
+                                    }
+
+                                    // Set the custom error handler function
+                                    set_error_handler('errorHandler');
+
+                                    // Define a custom exception handler function
+                                    function exceptionHandler($exception) {
+                                        // Create an error message using Bootstrap alert classes
+                                        $error = '<div class="alert alert-danger" role="alert">';
+                                        $error .= '<strong>Exception:</strong> ' . $exception->getMessage();
+                                        $error .= '</div>';
+
+                                        // Display the error message
+                                        echo $error;
+                                    }
+
+                                    // Set the custom exception handler function
+                                    set_exception_handler('exceptionHandler');
+                                    $sql = "SELECT * FROM tbl_request WHERE tuteeid = '$tuteeid'";
+                                    $result = mysqli_query($database, $sql);
+
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $scheduleid = $row['scheduleid'];
+                                        $tutorid = $row['tutorid'];
+                                        $request_status = $row['request_status'];
+
+                                        // design the status if 1 = accepted, 2 = rejected, 3 = pending
+                                        if ($request_status == 1) {
+                                            $status = '<span class="badge badge-success">Accepted</span>';
+                                        } elseif ($request_status == 2) {
+                                            $status = '<span class="badge badge-danger">Rejected</span>';
+                                        } elseif ($request_status == 0) {
+                                            $status = '<span class="badge badge-warning">Pending</span>';
+                                        }
+
+                                        $sql2 = "SELECT * FROM tbl_schedule WHERE scheduleid = '$scheduleid'";
+                                        $result2 = mysqli_query($database, $sql2);
+                                        $row2 = mysqli_fetch_assoc($result2);
+                                        $date = $row2['date'];
+                                        $time = $row2['start_time'];
+                                        $duration = $row2['duration'];
+                                        $topic = $row2['topic'];
+                                        $description = $row2['description'];
+
+                                        //design the topic and description make it more readable and add design to it use card bootstrap and design and center the card put the topic on header and description on body
+                                        $topic = '<div class="card"><div class="card-header">' . $topic . '</div><div class="card-body">' . $description . '</div></div>';
+
+
+                                        // add hours to the duration
+                                        $duration = $duration . ' hours';
+
+                                        // design the date and start_time
+                                        $date = date('d-m-Y', strtotime($date));
+                                        // remove the seconds on time and add pm and am change color depending on time
+                                        $time = date('h:i A', strtotime($time));
+
+
+                                        // make the date more readable by adding day
+                                        $day = date('l', strtotime($date));
+                                        $date = $day . ', ' . $date;
+
+
+                                        $sql3 = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                                        $result3 = mysqli_query($database, $sql3);
+                                        $row3 = mysqli_fetch_assoc($result3);
+                                        $tutorname = $row3['tutor_fname'] . ' ' . $row3['tutor_lname'];
+
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $date . ' ' . $time; ?></td>
+                                            <td><?php echo $topic; ?></td>
+                                            <td><?php echo $tutorname; ?></td>
+                                            <td><?php echo $duration; ?></td>
+                                            <td><?php echo $status; ?></td>
+                                        </tr>
+                                    <?php }
+                                    restore_error_handler();
+                                    restore_exception_handler();
+
+
+
+                                    ?>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
             </div>
-                
+
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+    <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Nexus Link 2020</span>
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2020</span>
-                </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
-
     </div>
-    <!-- End of Content Wrapper -->
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
 
 </div>
 <!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
 
 <?php
-            // Get the tutor's schedule
-            $catid = 2;
-            // get if post submitted
-            if (isset($_POST['contactadmin-submit'])) {
-                // get date and time now
-                $date = date('Y-m-d');
-                $time = date('H:i:s');
+// Get the tutor's schedule
+$catid = 2;
+// get if post submitted
+if (isset($_POST['contactadmin-submit'])) {
+    // get date and time now
+    $date = date('Y-m-d');
+    $time = date('H:i:s');
 
-                $datetime = $date.' '.$time;
-                // get the message and image
-                $message = $_POST['message'];
-                $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $reciever_catid = 0;
-                $reciever_id = 1;
-                // remove the name of image 
+    $datetime = $date.' '.$time;
+    // get the message and image
+    $message = $_POST['message'];
+    $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+    // remove the name of image
 
-                // change the name of image to datetime and save to folder remove the original name
-                $imageName = date('YmdHis').'.'.$imageExtension;
-                $target = "../img/".$imageName;
-                move_uploaded_file($_FILES['image']['tmp_name'], $target);
-                // get the directory and save to database
-                $image = "../img/".$imageName;
-                // insert the message and image to the database
-                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tuteeid', '$catid', '$message', '$image', '$datetime', '$reciever_catid', '$reciever_id')";
-                $result = mysqli_query($database, $sql);
-                // check if the message inserted
-                if ($result) {
-                    // display javascript alert
-                    echo '<script>alert("Message sent successfully!")</script>';
-                } else {
-                    // display javascript alert
-                    echo '<script>alert("Message not sent!")</script>';
-                }
-            }
-            ?>
+    // change the name of image to datetime and save to folder remove the original name
+    $imageName = date('YmdHis').'.'.$imageExtension;
+    $target = "../img/".$imageName;
+    move_uploaded_file($_FILES['image']['tmp_name'], $target);
+    // get the directory and save to database
+    $image = "../img/".$imageName;
+    $recipient_catid = 0;
+    $recipient_id = 1;
+    // insert the message and image to the database
+    $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tutorid', '$catid', '$message', '$image', '$datetime', '$recipient_catid', '$recipient_id')";
+    $result = mysqli_query($database, $sql);
+    // check if the message inserted
+    if ($result) {
+        // display javascript alert
+        echo '<script>alert("Message sent successfully!")</script>';
+    } else {
+        // display javascript alert
+        echo '<script>alert("Message not sent!")</script>';
+    }
+}
+?>
 
-            <!-- Add the modal HTML code to your page -->
+<!-- Add the modal HTML code to your page -->
 <div class="modal" id="messageModal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -392,12 +587,5 @@ if(isset($_SESSION["username"])){
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
 
 <?php include 'includes/footer.php'; ?>

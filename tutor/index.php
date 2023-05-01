@@ -438,10 +438,10 @@ if(isset($_SESSION["username"])){
                     $row = mysqli_fetch_assoc($result);
 
                     // get the duration from the tbl_tutor table
-                    $duration = $row['duration'];
+                    $duration = $row['allowed_schedule'];
 
                     // insert the data into the table
-                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, end_time, max_tutee, tutorid)
+                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, duration, max_tutee, tutorid)
                 VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$max_tutee', '$tutorid')";
                     $result1 = mysqli_query($database, $sql);
 
@@ -486,7 +486,11 @@ if(isset($_SESSION["username"])){
                                     <div class="form-group">
                                         <label for="end_time">Duration:</label>
                                         <div class="alert alert-warning" role="alert">
-                                            You are allowed only to tutor for <b><?php echo $duration; ?> hours</b> per session.
+                                            You are allowed only to tutor for <b><?php
+                                                $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+                                                $result = mysqli_query($database, $sql);
+                                                $row = mysqli_fetch_assoc($result);
+                                                echo $row['allowed_schedule']; ?> hours</b> per session.
                                         </div>
                                     </div>
                                     <div class="form-group">

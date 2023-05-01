@@ -2,12 +2,12 @@
 include_once('../connect.php');
 
 // Check if tutorid is set and is numeric
-if (isset($_POST['tutorid']) && is_numeric($_POST['tutorid'])) {
-    $tutorid = $_POST['tutorid'];
+if (isset($_POST['tuteeid']) && is_numeric($_POST['tuteeid'])) {
+    $tuteeid = $_POST['tuteeid'];
 
     // Perform logic to disable tutor account
     // Get the auth_id from tbl_tutor using tutorid
-    $sql = "SELECT auth_id FROM tbl_tutor WHERE tutorid = $tutorid";
+    $sql = "SELECT auth_id FROM tbl_tutee WHERE tuteeid = $tuteeid";
     $result = $database->query($sql);
     $row = $result->fetch_assoc();
     $auth_id = $row['auth_id'];

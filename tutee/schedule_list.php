@@ -445,6 +445,15 @@ if(isset($_SESSION["username"])){
                                     $('#btn-status').prop('disabled', false);
                                     cancelBtn.style.display = 'none';
                                 }
+                                else if(event.check == 1){
+                                    $('#btn-status').text('Enrolled');
+                                    $('#btn-status').removeClass('btn-primary');
+                                    $('#btn-status').addClass('btn-danger');
+                                    // disable the button
+                                    $('#btn-status').prop('disabled', true);
+                                    // add cancel appointment button
+                                    cancelBtn.style.display = 'inline-block';
+                                }
                                 else {
                                     $('#btn-status').text('Wait for verification...');
                                     $('#btn-status').removeClass('btn-primary');

@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'];
     $date = $_POST['date'];
     $start_time = $_POST['start_time'];
-    $end_time = $_POST['end_time'];
+    $duration = $_POST['duration'];
     $max_tutee = $_POST['max_tutee'];
 
     // reformat date to yyyy-mm-dd
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //max tutee to int
     $max_tutee = (int)$max_tutee;
 
-$query = "UPDATE tbl_schedule SET topic='$topic', description='$description', date='$date', start_time='$start_time', end_time='$end_time', max_tutee='$max_tutee' WHERE scheduleid='$scheduleId'";
+$query = "UPDATE tbl_schedule SET topic='$topic', description='$description', date='$date', start_time='$start_time', duration='$duration', max_tutee='$max_tutee' WHERE scheduleid='$scheduleId'";
 $result = mysqli_query($database, $query);
 
 //     // Set the appropriate Bootstrap alert message and style based on the query result if successfull

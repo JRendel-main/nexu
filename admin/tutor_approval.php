@@ -301,7 +301,7 @@ if(isset($_SESSION["username"])){
 
                                         $sql = "SELECT * FROM tbl_auth 
                                                 JOIN tbl_tutor ON tbl_auth.auth_id = tbl_tutor.auth_id
-                                                WHERE tbl_auth.acc_status = 0";
+                                                WHERE tbl_auth.acc_status = 0 OR tbl_auth.acc_status = 3";
                                         $result = mysqli_query($database, $sql);
 
                                         while ($row = mysqli_fetch_assoc($result)) {
@@ -320,7 +320,7 @@ if(isset($_SESSION["username"])){
                                             echo "<td>$tutor_course</td>";
                                             echo "<td>$tutor_year</td>";
                                             echo "<td><a href='approve.php?auth_id={$row['auth_id']}' class='btn btn-success'>Approve</a> <a href='deny.php?auth_id={$row['auth_id']}' class='btn btn-danger'>Deny</a>
-                                            <button type='button' class='btn btn-primary' data-toggle='modal' data-target='#myModal' data-idcor='" . $row['tutor_cor'] . "'>
+                                            <button type='button' class='btn btn-primary' data-toggle='modal' data-target='#corModal' data-idcor='" . $row['tutor_cor'] . "'>
                                             View COR
                                         </button>
                                                 </td>";
@@ -335,7 +335,7 @@ if(isset($_SESSION["username"])){
                         </div>
                     </div>
 
-                    <div class="modal fade" id="myModal">
+                    <div class="modal fade" id="corModal">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -355,10 +355,11 @@ if(isset($_SESSION["username"])){
             </div>
             <script>
                 $(document).ready(function () {
-                    $('#myModal').on('show.bs.modal', function (event) {
+                    $('#corModal').on('show.bs.modal', function (event) {
                         var button = $(event.relatedTarget);
                         var tutor_cor = button.data('idcor');
-                        $('#tutor_cor_img').attr('src', tutor_cor);
+                        $('#tutee_cor_img').attr('src', tutor_cor);
+                        console.log(tutor_cor);
                     });
                 });
             </script>

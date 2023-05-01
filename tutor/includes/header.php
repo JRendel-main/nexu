@@ -48,11 +48,53 @@
         align-items: center;
         text-align: center;
     }
+    .blue-gradient {
+        background: #91EAE4;
+        background: -webkit-linear-gradient(to right, #86A8E7, #91EAE4);
+        background: linear-gradient(to right, #86A8E7, #91EAE4);
+    }
+    .rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+
+.rating > input{ display:none;}
+
+.rating > label {
+  position: relative;
+    width: 1em;
+    font-size: 6vw;
+    color: #FFD600;
+    cursor: pointer;
+}
+.rating > label::before{ 
+  content: "\2605";
+  position: absolute;
+  opacity: 0;
+}
+.rating > label:hover:before,
+.rating > label:hover ~ label:before {
+  opacity: 1 !important;
+}
+
+.rating > input:checked ~ label:before{
+  opacity:1;
+}
+
+.rating:hover > input:checked ~ label:before{ opacity: 0.4; }
+
+.bg-gradient-blue {
+    background-image: linear-gradient(to right, #3F51B5, #2196F3);
+}
+
+
+
 
 
 </style>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-blue">
 <?php 
 if (isset($_GET['alert_msg']) && isset($_GET['alert_style'])) {
     $alert_msg = $_GET['alert_msg'];

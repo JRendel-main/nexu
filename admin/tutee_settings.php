@@ -371,7 +371,7 @@ if(isset($_SESSION["username"])){
                                 data: { tuteeid: tuteeid },
                                 success: function (data) {
                                     modal.find('.modal-body').html(data);
-                                    modal.find('#editDurationbtn').data('tutorid', tutorid);
+                                    modal.find('#editDurationbtn').data('tutee', tutee);
                                     // get the data back
                                     console.log(data);
                                 },
@@ -387,7 +387,7 @@ if(isset($_SESSION["username"])){
                     // Add click event listener to disable account button
                     $('.disable-account-btn').click(function () {
                         let tuteeid = $(this).data('tuteeid');
-                        console.log(tutorid);
+                        console.log(tuteeid);
 
                         // Show confirmation dialog
                         if (confirm("Are you sure you want to disable this account?")) {

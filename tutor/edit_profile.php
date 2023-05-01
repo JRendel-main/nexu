@@ -9,10 +9,10 @@ $username = $_SESSION['username'];
 $catid = $_SESSION['catid'];
 
 if(isset($_SESSION["username"])){
-    if(($_SESSION["username"])=="" or $_SESSION['catid']!=1){
+    if(($_SESSION["username"])=="" or $_SESSION['catid']!=2){
         header("location: ../login.php");
     }else{
-        $tuteeid = $_SESSION['tuteeid'];
+        $tutorid = $_SESSION['tutorid'];
         $authid = $_SESSION['authid'];
     }
 
@@ -21,20 +21,9 @@ if(isset($_SESSION["username"])){
 }
 
 
+
+
 ?>
-<style>
-    .modal.fade .modal-dialog {
-        -webkit-transform: translate(0, -50px);
-        transform: translate(0, -50px);
-        transition: transform 0.3s ease-out;
-    }
-
-    .modal.fade.show .modal-dialog {
-        -webkit-transform: translate(0, 0);
-        transform: translate(0, 0);
-    }
-
-</style>
 <!-- Page Wrapper -->
 <div id="wrapper">
     <?php include 'includes/sidebar.php'; ?>
@@ -99,7 +88,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-bell fa-fw"></i>
                             <!-- Counter - Alerts -->
-                            <span class="badge badge-danger badge-counter">2+</span>
+                            <span class="badge badge-danger badge-counter">3+</span>
                         </a>
                         <!-- Dropdown - Alerts -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -150,7 +139,7 @@ if(isset($_SESSION["username"])){
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-envelope fa-fw"></i>
                             <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">123131</span>
+                            <span class="badge badge-danger badge-counter">7</span>
                         </a>
                         <!-- Dropdown - Messages -->
                         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -160,7 +149,7 @@ if(isset($_SESSION["username"])){
                             </h6>
                             <a class="dropdown-item d-flex align-items-center" href="#">
                                 <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="../img/undraw_profile_1.svg"
+                                    <img class="rounded-circle" src="img/undraw_profile_1.svg"
                                          alt="...">
                                     <div class="status-indicator bg-success"></div>
                                 </div>
@@ -212,14 +201,13 @@ if(isset($_SESSION["username"])){
 
                     <div class="topbar-divider d-none d-sm-block"></div>
                     <?php
-                    // get the name of tutee using adminid
-                    $tuteeid = $_SESSION['tuteeid'];
-                    $sql = "SELECT * FROM tbl_tutee WHERE tuteeid = '$tuteeid'";
+                    // get the name of admin using adminid
+                    $tutorid = $_SESSION['tutorid'];
+                    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
                     $row = mysqli_fetch_assoc($result);
-                    $tuteename = $row['tutee_fname'] . ' ' .$row['tutee_lname'];
-
-                    //get the id of tutee
+                    $tutorname = $row['tutor_fname'];
+                    $tutor_bio = $row['tutor_bio'];
 
 
                     ?>
@@ -228,7 +216,7 @@ if(isset($_SESSION["username"])){
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $tuteename; ?></span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $tutorname; ?></span>
                             <img class="img-profile rounded-circle"
                                  src="../img/undraw_profile.svg">
                         </a>
@@ -258,100 +246,286 @@ if(isset($_SESSION["username"])){
                 </ul>
 
             </nav>
-
             <!-- End of Topbar -->
+            <!-- Account page navigation-->
+    <style>
+        .img-account-profile {
+    height: 10rem;
+}
+.rounded-circle {
+    border-radius: 50% !important;
+}
+.card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+}
+.card .card-header {
+    font-weight: 500;
+}
+.card-header:first-child {
+    border-radius: 0.35rem 0.35rem 0 0;
+}
+.card-header {
+    padding: 1rem 1.35rem;
+    margin-bottom: 0;
+    background-color: rgba(33, 40, 50, 0.03);
+    border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+}
+.form-control, .dataTable-input {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1;
+    color: #69707a;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #c5ccd6;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
-            </div>
-                
-        </div>
-        <!-- End of Main Content -->
+.nav-borders .nav-link.active {
+    color: #0061f2;
+    border-bottom-color: #0061f2;
+}
+.nav-borders .nav-link {
+    color: #69707a;
+    border-bottom-width: 0.125rem;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+    </style>
+    <?php
+    // get the tutorname 
+    $tutorid = $_SESSION['tutorid'];
+    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+    $result = mysqli_query($database, $sql);
+    $row = mysqli_fetch_assoc($result);
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Nexus Link 2020</span>
+    $tutor_bio = $row['tutor_bio'];
+    $tutor_fname = $row['tutor_fname'];
+    $tutor_mname = $row['tutor_mname'];
+    $tutor_lname = $row['tutor_lname'];
+
+    $tutor_fullname = $tutor_fname . ' ' . $tutor_mname . ' ' . $tutor_lname;
+    // get the profile link
+    $default_path = "../img/user.png";
+    $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
+    $result = mysqli_query($database, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $tutor_profile = $row['tutor_profile'];
+    $tutor_bio = $row['tutor_bio'];;
+
+    if ($tutor_profile == '') {
+        $tutor_profile = $default_path;
+    } else {
+        $tutor_profile = "..img/profile/tutor/" . $tutor_profile;
+    }
+    
+    
+    ?>
+            <div class="container">
+
+    <hr class="mt-0 mb-4">
+                <?php if (isset($alert_message) && isset($alert_type)): ?>
+                <div class="alert alert-<?php echo $alert_type; ?> alert-dismissible fade show" role="alert">
+                    <?php echo $alert_message; ?>
+                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
                 </div>
-            </div>
-        </footer>
-        <!-- End of Footer -->
+                <?php endif; ?>
 
-    </div>
-    <!-- End of Content Wrapper -->
-
-</div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<?php
-            // Get the tutor's schedule
-            $catid = 2;
-            // get if post submitted
-            if (isset($_POST['contactadmin-submit'])) {
-                // get date and time now
-                $date = date('Y-m-d');
-                $time = date('H:i:s');
-
-                $datetime = $date.' '.$time;
-                // get the message and image
-                $message = $_POST['message'];
-                $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $reciever_catid = 0;
-                $reciever_id = 1;
-                // remove the name of image 
-
-                // change the name of image to datetime and save to folder remove the original name
-                $imageName = date('YmdHis').'.'.$imageExtension;
-                $target = "../img/".$imageName;
-                move_uploaded_file($_FILES['image']['tmp_name'], $target);
-                // get the directory and save to database
-                $image = "../img/".$imageName;
-                // insert the message and image to the database
-                $sql = "INSERT INTO tbl_message (id, catid, message, image, date, recipient_catid, recipient_id) VALUES ('$tuteeid', '$catid', '$message', '$image', '$datetime', '$reciever_catid', '$reciever_id')";
-                $result = mysqli_query($database, $sql);
-                // check if the message inserted
-                if ($result) {
-                    // display javascript alert
-                    echo '<script>alert("Message sent successfully!")</script>';
-                } else {
-                    // display javascript alert
-                    echo '<script>alert("Message not sent!")</script>';
-                }
-            }
-            ?>
-
-            <!-- Add the modal HTML code to your page -->
-<div class="modal" id="messageModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal header -->
-            <div class="modal-header">
-                <h5 class="modal-title">Message Admin</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form enctype="multipart/form-data" name="contactadmin" method="POST">
-                    <div class="form-group">
-                        <label for="message">Message:</label>
-                        <textarea class="form-control" id="message" name="message" rows="5"></textarea>
+                <div class="row">
+        <div class="col-xl-4">
+            <!-- Profile picture card-->
+            <div class="card mb-4 mb-xl-0">
+            <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <!-- Profile picture preview-->
+                    <div class="mb-3">
+                        <div class="position-relative">
+                            <img class="img-account-profile rounded-circle mb-2" id="profile-picture-preview" src="../img/user.png" alt="" width="150" height="150">
+                            <span class="badge badge-pill badge-primary position-absolute top-0 right-0"><i class="fa fa-pencil"></i></span>
+                        </div>
                     </div>
+                    <!-- Profile picture help block-->
+                    <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                    <!-- Profile picture upload form-->
                     <div class="form-group">
-                        <label for="image">Image:</label>
-                        <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png">
+                        <label for="profile-picture-input" class="btn btn-primary">
+                            Upload new image
+                            <input type="file" accept="image/*" name="profile_picture" form="profile-form" style="display:none;">
+                        </label>
                     </div>
-                    <button type="submit" name="contactadmin-submit" class="btn btn-primary">Send</button>
-                </form>
+                    <script>
+                        // Add event listener to trigger file input when the image is clicked
+                        document.getElementById('profile-picture-preview').addEventListener('click', function() {
+                            document.getElementById('profile-picture-input').click();
+                        });
+                    </script>
+                </div>
+
             </div>
         </div>
-    </div>
-</div>
+            <div class="col-xl-8">
+                <?php
+
+                ?>
+            <!-- Card -->
+            <div class="card mb-4 mb-xl-0">
+                <!-- modify the form to include the expertise_id field -->
+                <form method="post">
+                    <div class="card-header">Edit Profile</div>
+                    <div class="card-body text-center">
+                        <!-- add bio -->
+                        <div class="row">
+                            <label class="small mb-1" for="inputBio">Bio</label>
+                            <textarea class="form-control" id="inputBio" name="tutor_bio" placeholder="Tell us a little about yourself" rows="4"><?php echo $tutor_bio ?></textarea>
+                        </div>
+                        <!-- add expertise -->
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h6>Expertise</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="inputExpertise">Expertise</label>
+                                    <input class="form-control" id="inputExpertise" name="expertise" type="text" placeholder="e.g. Math, Physics">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="inputExperience">Experience</label>
+                                    <input class="form-control" id="inputExperience" name="experience" type="text" placeholder="e.g. 5 years">
+                                </div>
+                            </div>
+                            <!-- add hidden field for expertise_id -->
+                            <input type="hidden" name="expertise_id" id="expertise_id" value="">
+                            <div class="col-md-12">
+                                <button class="btn btn-primary" type="button" onclick="addExpertise()">Add</button>
+                            </div>
+                        </div>
+                        <!-- list of expertise -->
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h6>List of Expertise</h6>
+                            </div>
+                            <div class="col-md-12">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Expertise</th>
+                                        <th>Expertise Level</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="expertise-list">
+                                    <?php
+                                    // get the list of expertise from the database
+                                    $sql = "SELECT * FROM tbl_expertise WHERE tutorid = '$tutorid'";
+                                    $result = mysqli_query($database, $sql);
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo '<tr>
+                             <td>' . $row['expertise'] . '</td>
+                             <td>' . $row['expertise_level'] . '</td>
+                             <td>
+                                 <button class="btn btn-primary btn-sm" type="button" onclick="editExpertise(' . $row['expertiseid'] . ')">Edit</button>
+                                 <button class="btn btn-danger btn-sm" type="button" onclick="deleteExpertise(' . $row['expertiseid'] . ')">Delete</button>
+                             </td>
+                         </tr>';
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary" type="submit" name="update_profile">Update Profile</button>
+                    </div>
+
+                </form>
+                <script>
+                    // add expertise
+                    function addExpertise() {
+                        // get the values from the input fields
+                        var expertise = $("#inputExpertise").val();
+                        var experience = $("#inputExperience").val();
+                        var expertise_id = $("#expertise_id").val();
+
+                        // check if the expertise_id is set, if set update the record, else insert a new record
+                        if(expertise_id != "") {
+                            // update the record
+                            $.ajax({
+                                url: "edit-profile.php",
+                                type: "POST",
+                                data: {
+                                    expertise_id: expertise_id,
+                                    expertise: expertise,
+                                    experience: experience
+                                },
+                                success: function(data) {
+                                    // reload the page
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            // insert a new record
+                            $.ajax({
+                                url: "edit-profile.php",
+                                type: "POST",
+                                data: {
+                                    expertise: expertise,
+                                    experience: experience
+                                },
+                                success: function(data) {
+                                    // reload the page
+                                    location.reload();
+                                }
+                            });
+                        }
+                    }
+
+                    // edit expertise
+                    function editExpertise(expertise_id) {
+                        // get the values from the table
+                        var expertise = $("#expertise-list").find("tr[data-id='" + expertise_id + "']").find("td:eq(0)").text();
+                        var experience = $("#expertise-list").find("tr[data-id='" + expertise_id + "']").find("td:eq(1)").text();
+
+                        // set the values to the input fields
+                        $("#inputExpertise").val(expertise);
+                        $("#inputExperience").val(experience);
+                        $("#expertise_id").val(expertise_id);
+                    }
+
+                    // delete expertise
+                    function deleteExpertise(expertise_id) {
+                        // delete the record
+                        $.ajax({
+                            url: "edit-profile.php",
+                            type: "POST",
+                            data: {
+                                delete_expertise_id: expertise_id
+                            },
+                            success: function(data) {
+                                // reload the page
+                                location.reload();
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        <!-- expertise table -->
+        <!-- add expertise modal -->
 
 <!-- Add the modal trigger button/icon to your page -->
 <a href="#" id="messageModalTrigger" class="btn btn-primary rounded-circle position-fixed" style="bottom: 20px; right: 20px; z-index: 9999;">
@@ -373,6 +547,7 @@ if(isset($_SESSION["username"])){
     });
 </script>
 
+
 <!-- Logout Modal-->
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
@@ -392,12 +567,6 @@ if(isset($_SESSION["username"])){
         </div>
     </div>
 </div>
-
-
-
-
-
-
 
 
 <?php include 'includes/footer.php'; ?>

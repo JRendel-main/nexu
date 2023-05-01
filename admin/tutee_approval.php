@@ -300,7 +300,7 @@ if(isset($_SESSION["username"])){
 
                                 $sql = "SELECT * FROM tbl_auth 
                                                 JOIN tbl_tutee ON tbl_auth.auth_id = tbl_tutee.auth_id
-                                                WHERE tbl_auth.acc_status = 0";
+                                                WHERE tbl_auth.acc_status = 0 OR tbl_auth.acc_status = 3";
                                 $result = mysqli_query($database, $sql);
 
                                 while ($row = mysqli_fetch_assoc($result)) {
