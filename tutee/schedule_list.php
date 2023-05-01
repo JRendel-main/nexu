@@ -255,7 +255,7 @@ if(isset($_SESSION["username"])){
                 $tutorid = $_GET['tutorId'];
                 $tuteeid = $_GET['tuteeId'];
 
-                $sql = "SELECT scheduleid, date, start_time, duration, max_tutee, topic, description FROM tbl_schedule WHERE tutorid = '$tutorid'";
+                $sql = "SELECT * FROM tbl_schedule WHERE tutorid = '$tutorid'";
                 $result = mysqli_query($database, $sql);
 
                 // Create an array to store events
@@ -270,6 +270,7 @@ if(isset($_SESSION["username"])){
                     $description = $row['description'];
                     $scheduleid = $row['scheduleid'];
                     $max_tutee = $row['max_tutee'];
+                    $place = $row['place'];
 
                     $sql1 = "SELECT COUNT(tuteeid) FROM tbl_request WHERE scheduleid = '$scheduleid' AND request_status = 1";
                     $result1 = mysqli_query($database, $sql1);
@@ -293,6 +294,7 @@ if(isset($_SESSION["username"])){
                         'date' => $row['date'],
                         'topic' => $topic,
                         'description' => $description,
+                        'place' => $place,
                         'start' => $start,
                         'end' => $end,
                         'duration' => $row['duration'],
@@ -333,14 +335,6 @@ if(isset($_SESSION["username"])){
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label for="scheduleid">Schedule ID:</label>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <p id="scheduleid"></p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
                                                         <label for="date">Date:</label>
                                                     </div>
                                                     <div class="col-md-6">
@@ -377,6 +371,14 @@ if(isset($_SESSION["username"])){
                                                     </div>
                                                     <div class="col-md-6">
                                                         <p id="description"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="place">Meetup Place: </label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p id="place"></p>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -431,6 +433,7 @@ if(isset($_SESSION["username"])){
                                 $('#duration').text(event.duration);
                                 $('#topic').text(event.topic);
                                 $('#description').text(event.description);
+                                $('#place').text(event.place);
                                 $('#maxtutee').text(event.max_tutee);
                                 $('#slot').text(event.tuteeid + '/' + event.max_tutee + ' slots')
                                 var btn = $('#btn-status');

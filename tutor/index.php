@@ -361,6 +361,7 @@ if(isset($_SESSION["username"])){
                                         <tr>
                                             <th>Topic</th>
                                             <th>Description</th>
+                                            <th>Place</th>
                                             <th>Date</th>
                                             <th>Duration</th>
                                             <th>Start-End Time</th>
@@ -381,6 +382,7 @@ if(isset($_SESSION["username"])){
                                                 $start_time = $row['start_time'];
                                                 $duration = $row['duration'];
                                                 $slot_avail = $row['max_tutee'];
+                                                $place = $row['place'];
 
                                                 // get the hours between start time and end time and duration of the session
                                                 $start = new DateTime($start_time);
@@ -400,6 +402,7 @@ if(isset($_SESSION["username"])){
                                                 echo "<tr>";
                                                 echo "<td>$topic</td>";
                                                 echo "<td>$description</td>";
+                                                echo "<td>$place</td>";
                                                 echo "<td>$date</td>";
                                                 echo "<td>$duration <b>Hours</b></td>";
                                                 echo "<td>$start_time</td>";
@@ -432,6 +435,7 @@ if(isset($_SESSION["username"])){
                     $start_time = $_POST['start_time'];
                     $end_time = $_POST['end_time'];
                     $max_tutee = $_POST['max_tutee'];
+                    $place = $_POST['place'];
                     // get the allowed duration to tbl_tutor table
                     $sql = "SELECT * FROM tbl_tutor WHERE tutorid = '$tutorid'";
                     $result = mysqli_query($database, $sql);
@@ -441,8 +445,8 @@ if(isset($_SESSION["username"])){
                     $duration = $row['allowed_schedule'];
 
                     // insert the data into the table
-                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, duration, max_tutee, tutorid)
-                VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$max_tutee', '$tutorid')";
+                    $sql = "INSERT INTO tbl_schedule (topic, description, date, start_time, duration, place, max_tutee, tutorid)
+                VALUES ('$topic', '$description', '$date', '$start_time', '$duration', '$place', '$max_tutee', '$tutorid')";
                     $result1 = mysqli_query($database, $sql);
 
                     // check if insertion was successful
@@ -478,6 +482,10 @@ if(isset($_SESSION["username"])){
                                     <div class="form-group">
                                         <label for="date">Date:</label>
                                         <input type="date" class="form-control" id="date" name="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="place">Meetup Place:</label>
+                                        <input type="text" class="form-control" id="place" name="place" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="start_time">Start Time:</label>
